@@ -42,15 +42,11 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<BsSelectBoxResponse> selectApi(Map<String, String> params) async {
-    params.addAll({'typecd': 'PRICETYPE'});
-    Uri url = Uri.http('api.mosewa', 'webs/types/select', params);
+    Uri url = Uri.http('localhost', 'api-json.php', params);
     Response response = await http.get(url);
     if(response.statusCode == 200) {
-      Map<String, dynamic> json = convert.jsonDecode(response.body);
-      return BsSelectBoxResponse.createFromJson(json['data'],
-        value: (data) => data['typeid'],
-        renderText: (data) => Text(data['typename']),
-      );
+      List json = convert.jsonDecode(response.body);
+      return BsSelectBoxResponse.createFromJson(json);
     }
 
     return BsSelectBoxResponse(options: []);

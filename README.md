@@ -141,15 +141,11 @@ To create a select box with server side data, use `serverSide` property
 ```dart
 // ...
   Future<BsSelectBoxResponse> selectApi(Map<String, String> params) async {
-    params.addAll({'typecd': 'PRICETYPE'});
-    Uri url = Uri.http('api.mosewa', 'webs/types/select', params);
+    Uri url = Uri.http('localhost', 'api-json.php', params);
     Response response = await http.get(url);
     if(response.statusCode == 200) {
-      Map<String, dynamic> json = convert.jsonDecode(response.body);
-      return BsSelectBoxResponse.createFromJson(json['data'],
-        value: (data) => data['typeid'],
-        renderText: (data) => Text(data['typename']),
-      );
+      List json = convert.jsonDecode(response.body);
+      return BsSelectBoxResponse.createFromJson(json);
     }
 
     return BsSelectBoxResponse(options: []);
@@ -157,44 +153,50 @@ To create a select box with server side data, use `serverSide` property
 // ...
 ```
 
-### Note
-- `createFromJson` is automatically put response data `value`, but you cant change it with define manual
-
 Json response data
 ```json
-{
-  "result":true,
-  "status":200,
-  "message":null,
-  "data":[
-    {
-      "typeid":131,
-      "masterid":130,
-      "typename":"Harga Jual",
-      "typecd":"",
-      "typeseq":1,
-      "countchildren":0,
-      "parent":{
-      "typeid":130,
-      "typename":"Tipe Harga",
-      "typecd":"PRICETYPE"
+[
+  {
+    "value":"1",
+    "text":"Tipe 01",
+    "typecd":"TP01"},
+  {
+    "value":"2",
+    "text":"Type 02",
+    "typecd":"TP02"
+  }
+]
+```
+
+### Note
+- `createFromJson` is automatically put response data `value`, but you cant change it with define manual
+- If you want to make `typecd` as `value` of option, use `value` parameters of `createFromJson`
+
+```dart
+/// ...
+    if(response.statusCode == 200) {
+      List json = convert.jsonDecode(response.body);
+      return BsSelectBoxResponse.createFromJson(json, 
+        value: (data) => data['typecd'],
+      );
     }
-    },
-    {
-      "typeid":132,
-      "masterid":130,
-      "typename":"Harga Sewa",
-      "typecd":"",
-      "typeseq":1,
-      "countchildren":0,
-      "parent":{
-      "typeid":130,
-      "typename":"Tipe Harga",
-      "typecd":"PRICETYPE"
-      }
+/// ...
+```
+
+- If you want to make `typecd` as `text` of option, use `renderText` parameters of `createFromJson`
+- `renderText` function need returned `Widget`
+
+```dart
+/// ...
+    if(response.statusCode == 200) {
+      List json = convert.jsonDecode(response.body);
+      return BsSelectBoxResponse.createFromJson(json, 
+        value: (data) => data['typecd'],
+        renderText: (data) => Text(data['typecd'])
+      );
     }
-  ]
-}
+/// ...
 ```
 
 ![Alt text](https://raw.githubusercontent.com/kholifanalfon/bs_flutter_selectbox/main/screenshot/selectbox4.png "Server Side Select Box")
+![Alt text](https://raw.githubusercontent.com/kholifanalfon/bs_flutter_selectbox/main/screenshot/selectbox5.png "Server Side Select Box")

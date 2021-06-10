@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
+/// Class to handle all overlay of [BsSelectBox]
 class BsOverlay {
 
+  /// define overlay entry of [BsSelectBox]
   static List<BsOverlayEntry> overlays = [];
 
+  /// add overlay entry when selectbox opened
   static BsOverlayEntry add(OverlayEntry overlayEntry, VoidCallback close) {
     BsOverlayEntry bsOverlayEntry = BsOverlayEntry(overlays.length, close, overlayEntry);
     overlays.add(bsOverlayEntry);
@@ -11,10 +14,12 @@ class BsOverlay {
     return bsOverlayEntry;
   }
 
+  /// get spesific data overlay
   static BsOverlayEntry get(int index) {
     return overlays[index];
   }
 
+  /// remove all opened overlay in context
   static void removeAll() {
     overlays.map((overlay) {
       overlay.overlayEntry.remove();
@@ -24,15 +29,20 @@ class BsOverlay {
   }
 }
 
+/// Class overlay entry of [BsSelectBox]
 class BsOverlayEntry {
 
+  /// Constructor [BsOverlayEntry]
   const BsOverlayEntry(this.index, VoidCallback close, this.overlayEntry) : _close = close;
 
+  /// index position of overlay entry
   final int index;
 
   final VoidCallback _close;
 
+  /// overlay entry of context
   final OverlayEntry overlayEntry;
 
+  /// Close callback
   void close() => _close();
 }

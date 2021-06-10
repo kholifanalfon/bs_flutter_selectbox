@@ -5,8 +5,11 @@ import 'package:bs_flutter_selectbox/src/utils/bs_selectbox_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+
+/// Wrapper overlay of options
 class BsWrapperOptions extends StatefulWidget {
 
+  /// Constructor of BsWrapperOptions
   BsWrapperOptions({
     Key? key,
     required this.containerKey,
@@ -28,28 +31,40 @@ class BsWrapperOptions extends StatefulWidget {
     return _BsWrapperOptionsState();
   }
 
+  /// To set size of [BsWrapperOptions] below of [BsSelectBox]
   final Size size;
 
+  /// To set offset of [BsWrapperOptions] below of [BsSelectBox]
   final Offset offset;
 
+  /// define searchable of [BsSelectBox]
   final bool? searchable;
 
+  /// Used so that the overlay wrapper follows the select box
   final LayerLink link;
 
+  /// define no data found text
   final String noDataText;
 
+  /// placeholder search input
   final String placeholderSearch;
 
+  /// To get updated size of [BsSelectBox]
   final GlobalKey<State> containerKey;
 
+  /// define style of [BsWrapperOption] below of [BsSelectBox]
   final BsSelectBoxStyle selectBoxStyle;
 
+  /// define size of [BsWrapperOption] below of [BsSelectBox]
   final BsSelectBoxSize selectBoxSize;
 
+  /// define controller of [BsWrapperOption] below of [BsSelectBox]
   final BsSelectBoxController selectBoxController;
 
+  /// define on search action of [BsWrapperOption] below of [BsSelectBox]
   final ValueChanged<String>? onSearch;
 
+  /// define on change action of [BsWrapperOption] below of [BsSelectBox]
   final ValueChanged<BsSelectBoxOption> onChange;
 }
 
@@ -197,7 +212,7 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
                             children: widget.selectBoxController.options.map((option) {
                               Color color = Colors.white;
                               if(widget.selectBoxController.getSelected() != null) {
-                                int index = widget.selectBoxController.getSelectedAll().indexWhere((element) => element.value == option.value);
+                                int index = widget.selectBoxController.getSelectedAll().indexWhere((element) => element.getValue() == option.getValue());
                                 if (index != -1)
                                   color = Color(0xfff1f1f1);
                               }
@@ -222,7 +237,7 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
                                         child: Container(
                                           alignment: Alignment.centerLeft,
                                           padding: EdgeInsets.only(left: 12.0, right: 12.0, top: 10.0, bottom: 10.0),
-                                          child: option.text,
+                                          child: option.getText(),
                                         ),
                                       ),
                                     ),

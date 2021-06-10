@@ -1,75 +1,92 @@
 import 'package:bs_flutter_selectbox/src/utils/bs_selectbox_option.dart';
 
+/// Class to controll [BsSelectBox]
 class BsSelectBoxController {
 
+  /// Constructor [BsSelectBoxController]
   BsSelectBoxController({
-    this.selected,
+    List<BsSelectBoxOption>? selected,
     this.processing = false,
     this.multiple = false,
     this.options = const [],
-  });
+  }) : _selected = selected;
 
+  /// define state of [BsSelectBox] when using server side mode
   bool processing;
 
+  /// define permission [BsSelectBox] is allowed multiple choice or not
   bool multiple;
 
+  /// define options of [BsSelectBox]
   List<BsSelectBoxOption> options;
 
-  List<BsSelectBoxOption>? selected;
+  /// define selected value with private
+  List<BsSelectBoxOption>? _selected;
 
+  /// to clear selected value of [BsSelectBox]
   void clear() {
-    if(selected != null)
-      selected = null;
+    if(_selected != null)
+      _selected = null;
   }
 
+  /// to set all options of [BsSelectBox]
   void setOptions(List<BsSelectBoxOption> allOptions) => options = allOptions;
 
+  /// to add option of [BsSelectBox]
   void addOption(BsSelectBoxOption option) => options.add(option);
 
+  /// to add all options of [BsSelectBox] with array
   void addOptionAll(List<BsSelectBoxOption> options) => options.addAll(options);
 
+  /// to set selected value of [BsSelectBox]
   void setSelected(BsSelectBoxOption option) {
     if(!multiple)
-      selected = [option];
+      _selected = [option];
 
-    if(selected == null)
-      selected = [];
+    if(_selected == null)
+      _selected = [];
 
     if(multiple)
-      selected!.add(option);
+      _selected!.add(option);
   }
 
-  void setSelectedAll(List<BsSelectBoxOption> options) => selected = options;
+  /// to set selected multiple value of [BsSelectBox]
+  void setSelectedAll(List<BsSelectBoxOption> options) => _selected = options;
 
+  /// remove selected value with specific index
   void removeSelectedAt(int index) {
-    if(selected != null) {
-      selected!.removeAt(index);
+    if(_selected != null) {
+      _selected!.removeAt(index);
 
-      if (selected!.length == 0)
+      if (_selected!.length == 0)
         clear();
     }
   }
 
+  /// remove selected value
   void removeSelected(BsSelectBoxOption option) {
-    if(selected != null) {
-      int index = selected!.indexWhere((element) => element.value == option.value);
+    if(_selected != null) {
+      int index = _selected!.indexWhere((element) => element.getValue() == option.getValue());
       if(index != -1)
-        selected!.removeAt(index);
+        _selected!.removeAt(index);
 
-      if (selected!.length == 0)
+      if (_selected!.length == 0)
         clear();
     }
   }
 
-  BsSelectBoxOption? getSelected() => selected != null ? selected!.first : null;
+  /// get first selected value, this function used when [BsSelectBox] not allowed multiple
+  BsSelectBoxOption? getSelected() => _selected != null ? _selected!.first : null;
 
-  List<BsSelectBoxOption> getSelectedAll() => selected!;
+  /// get all selected value, this function used when [BsSelectBox] allowd multiple
+  List<BsSelectBoxOption> getSelectedAll() => _selected!;
 
+  /// get selected value in string
   String? getSelectedAsString() {
-    if(selected != null) {
+    if(_selected != null) {
       StringBuffer string = StringBuffer();
-      selected!.forEach((option) {
-        string.write(option.value.toString() + ',');
+      _selected!.forEach((option) {
+        string.write(option.getValueAsString() + ',');
       });
 
       return string.toString().length > 0

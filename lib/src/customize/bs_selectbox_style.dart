@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class BsSelectBoxStyle {
 
   const BsSelectBoxStyle({
-    this.borderRadius,
+    this.borderRadius = const BorderRadius.all(Radius.circular(5.0)),
     this.fontSize = 12.0,
     this.selectedBackgroundColor = const Color(0xfff1f1f1),
     this.selectedColor = const Color(0xff212529),
@@ -15,27 +15,33 @@ class BsSelectBoxStyle {
     this.arrowIcon = Icons.arrow_drop_down,
   });
 
+  /// define border radius of [BsSelectBox]
   final BorderRadiusGeometry? borderRadius;
 
+  /// define color of [BsSelectBox]
   final Color color;
 
+  /// define placeholderColor of [BsSelectBox]
   final Color placeholderColor;
 
+  /// define selectedBackgroundColor of [BsSelectBox]
   final Color selectedBackgroundColor;
 
+  /// define selectedColor of [BsSelectBox]
   final Color selectedColor;
 
+  /// define of disabledBackgroundColor of [BsSelectBox]
   final Color disabledBackgroundColor;
 
+  /// define of backgroundColor of [BsSelectBox]
   final Color backgroundColor;
 
+  /// define borderColor of [BsSelectBox]
   final Color borderColor;
 
+  /// define fontSize of [BsSelectBox]
   final double fontSize;
 
+  /// defien arrowIcon of [BsSelectBox]
   final IconData arrowIcon;
-
-  static const BsSelectBoxStyle outline = BsSelectBoxStyle(
-    borderRadius: BorderRadius.all(Radius.circular(5.0))
-  );
 }

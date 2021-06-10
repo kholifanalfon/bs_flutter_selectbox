@@ -19,7 +19,7 @@ class BsSelectBox extends StatefulWidget {
     this.noDataText = 'No data found',
     this.placeholderSearch = 'Search ...',
     this.size = const BsSelectBoxSize(),
-    this.style = BsSelectBoxStyle.outline,
+    this.style = const BsSelectBoxStyle(),
     this.serverSide,
     this.searchable = false,
     this.disabled = false,
@@ -141,7 +141,7 @@ class _BsSelectBoxState extends State<BsSelectBox> with SingleTickerProviderStat
         onChange: (option) {
           if(widget.selectBoxController.multiple) {
             if(widget.selectBoxController.getSelected() != null) {
-              int index = widget.selectBoxController.getSelectedAll().indexWhere((element) => element.value == option.value);
+              int index = widget.selectBoxController.getSelectedAll().indexWhere((element) => element.getValue() == option.getValue());
               if(index != -1)
                 widget.selectBoxController.removeSelectedAt(index);
               else widget.selectBoxController.setSelected(option);
@@ -250,7 +250,7 @@ class _BsSelectBoxState extends State<BsSelectBox> with SingleTickerProviderStat
                       )
                     : renderSelected(),
                 )),
-                widget.selectBoxController.selected == null ? Container(width: 0, height: 0) : TextButton(
+                widget.selectBoxController.getSelected() == null ? Container(width: 0, height: 0) : TextButton(
                   onPressed: () => clear(),
                   style: TextButton.styleFrom(
                     minimumSize: Size(5.0, 5.0)
@@ -277,7 +277,7 @@ class _BsSelectBoxState extends State<BsSelectBox> with SingleTickerProviderStat
           fontSize: widget.size.fontSize,
           color: widget.style.color,
         ),
-        child: Container(child: widget.selectBoxController.getSelected()!.text),
+        child: Container(child: widget.selectBoxController.getSelected()!.getText()),
       ));
 
     if(widget.selectBoxController.multiple)
@@ -308,7 +308,7 @@ class _BsSelectBoxState extends State<BsSelectBox> with SingleTickerProviderStat
                       fontSize: widget.style.fontSize - 2,
                       color: widget.style.selectedColor,
                     ),
-                    child: option.text,
+                    child: option.getText(),
                   )),
                   Icon(Icons.close, size: widget.style.fontSize - 2, color: widget.style.selectedColor),
                 ],
