@@ -118,6 +118,11 @@ To create a select box with multiple allowed set `multiple` properties in `BsSel
 // ...
 ```
 
+### Note
+- To get selected value use `getSelected` or `getSelectedAll`
+- If you need returned string use `getSelectedAsString`, it will be returned string value with `,` separator
+- To set selected value use `setSelected` or `setSelectedAll`
+
 ![Alt text](https://raw.githubusercontent.com/kholifanalfon/bs_flutter_selectbox/main/screenshot/selectbox3.png "Multiple Select Box")
 
 ## Select Box Server Side
