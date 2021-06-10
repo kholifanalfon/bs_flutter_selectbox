@@ -9,7 +9,6 @@ export 'customize/bs_selectbox_style.dart';
 export 'utils/bs_overlay.dart';
 
 class BsSelectBox extends StatefulWidget {
-
   const BsSelectBox({
     Key? key,
     required this.selectBoxController,
@@ -53,8 +52,8 @@ class BsSelectBox extends StatefulWidget {
   final BsSelectBoxServerSide? serverSide;
 }
 
-class _BsSelectBoxState extends State<BsSelectBox> with SingleTickerProviderStateMixin {
-
+class _BsSelectBoxState extends State<BsSelectBox>
+    with SingleTickerProviderStateMixin {
   GlobalKey<State> _key = GlobalKey<State>();
   GlobalKey<State> _keyOverlay = GlobalKey<State>();
 
@@ -92,13 +91,14 @@ class _BsSelectBoxState extends State<BsSelectBox> with SingleTickerProviderStat
   }
 
   void onFocus() {
-    if(_focusNode.hasFocus) open();
+    if (_focusNode.hasFocus) open();
   }
 
   void pressed() {
-    if(!widget.disabled)
-        if(!isOpen) open();
-        else close();
+    if (!widget.disabled) if (!isOpen)
+      open();
+    else
+      close();
 
     return null;
   }
@@ -106,14 +106,14 @@ class _BsSelectBoxState extends State<BsSelectBox> with SingleTickerProviderStat
   void api({String searchValue = ''}) {
     setState(() {
       widget.selectBoxController.processing = true;
-      if(_keyOverlay.currentState != null)
+      if (_keyOverlay.currentState != null)
         _keyOverlay.currentState!.setState(() {});
 
       widget.serverSide!({'searchValue': searchValue}).then((response) {
         setState(() {
           widget.selectBoxController.processing = false;
           widget.selectBoxController.options = response.options;
-          if(_keyOverlay.currentState != null)
+          if (_keyOverlay.currentState != null)
             _keyOverlay.currentState!.setState(() {});
         });
       });
@@ -125,7 +125,8 @@ class _BsSelectBoxState extends State<BsSelectBox> with SingleTickerProviderStat
     _animated.forward();
 
     RenderBox renderBox = _key.currentContext!.findRenderObject() as RenderBox;
-    BsOverlayEntry overlayEntry = BsOverlay.add(OverlayEntry(builder: (context) {
+    BsOverlayEntry overlayEntry =
+        BsOverlay.add(OverlayEntry(builder: (context) {
       return BsWrapperOptions(
         key: _keyOverlay,
         link: _layerLink,
@@ -139,34 +140,37 @@ class _BsSelectBoxState extends State<BsSelectBox> with SingleTickerProviderStat
         placeholderSearch: widget.placeholderSearch!,
         selectBoxController: widget.selectBoxController,
         onChange: (option) {
-          if(widget.selectBoxController.multiple) {
-            if(widget.selectBoxController.getSelected() != null) {
-              int index = widget.selectBoxController.getSelectedAll().indexWhere((element) => element.getValue() == option.getValue());
-              if(index != -1)
+          if (widget.selectBoxController.multiple) {
+            if (widget.selectBoxController.getSelected() != null) {
+              int index = widget.selectBoxController
+                  .getSelectedAll()
+                  .indexWhere(
+                      (element) => element.getValue() == option.getValue());
+              if (index != -1)
                 widget.selectBoxController.removeSelectedAt(index);
-              else widget.selectBoxController.setSelected(option);
-            }
-
-            else widget.selectBoxController.setSelected(option);
+              else
+                widget.selectBoxController.setSelected(option);
+            } else
+              widget.selectBoxController.setSelected(option);
 
             setState(() {});
           }
 
-          if(!widget.selectBoxController.multiple) {
+          if (!widget.selectBoxController.multiple) {
             widget.selectBoxController.setSelected(option);
 
             close();
           }
         },
         onSearch: (value) {
-          if(widget.serverSide != null) {
+          if (widget.serverSide != null) {
             api(searchValue: value);
           } else {
             setState(() {
               widget.selectBoxController.options = _options.where((element) {
                 return value == '' || element.searchable.contains(value);
               }).toList();
-              if(_keyOverlay.currentState != null)
+              if (_keyOverlay.currentState != null)
                 _keyOverlay.currentState!.setState(() {});
             });
           }
@@ -179,8 +183,7 @@ class _BsSelectBoxState extends State<BsSelectBox> with SingleTickerProviderStat
     });
     Overlay.of(context)!.insert(overlayEntry.overlayEntry);
 
-    if(widget.serverSide != null)
-      api();
+    if (widget.serverSide != null) api();
 
     setState(() {
       isOpen = true;
@@ -210,7 +213,9 @@ class _BsSelectBoxState extends State<BsSelectBox> with SingleTickerProviderStat
       child: Stack(
         children: [
           renderContainer(),
-          widget.hintTextLabel == null ? Container(width: 0, height: 0) : renderHintLabel(),
+          widget.hintTextLabel == null
+              ? Container(width: 0, height: 0)
+              : renderHintLabel(),
         ],
       ),
     );
@@ -230,36 +235,45 @@ class _BsSelectBoxState extends State<BsSelectBox> with SingleTickerProviderStat
           ),
           child: Container(
             decoration: BoxDecoration(
-              color: widget.disabled ? widget.style.disabledBackgroundColor : widget.style.backgroundColor,
-              border: Border.all(color: !isOpen ? widget.style.borderColor : Colors.black),
+              color: widget.disabled
+                  ? widget.style.disabledBackgroundColor
+                  : widget.style.backgroundColor,
+              border: Border.all(
+                  color: !isOpen ? widget.style.borderColor : Colors.black),
               borderRadius: widget.style.borderRadius,
             ),
             child: Row(
               children: [
-                Expanded(child: Container(
+                Expanded(
+                    child: Container(
                   padding: widget.size.padding,
                   child: widget.selectBoxController.getSelected() == null
-                    ? widget.hintText == null ? Text('') : Text(
-                        widget.hintText!,
-                        style: TextStyle(
-                          color: widget.style.placeholderColor,
-                          fontSize: widget.style.fontSize + 2
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      )
-                    : renderSelected(),
+                      ? widget.hintText == null
+                          ? Text('')
+                          : Text(
+                              widget.hintText!,
+                              style: TextStyle(
+                                  color: widget.style.placeholderColor,
+                                  fontSize: widget.style.fontSize + 2),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            )
+                      : renderSelected(),
                 )),
-                widget.selectBoxController.getSelected() == null ? Container(width: 0, height: 0) : TextButton(
-                  onPressed: () => clear(),
-                  style: TextButton.styleFrom(
-                    minimumSize: Size(5.0, 5.0)
-                  ),
-                  child: Icon(Icons.close, size: widget.size.fontSize! - 2, color: widget.style.color),
-                ),
+                widget.selectBoxController.getSelected() == null
+                    ? Container(width: 0, height: 0)
+                    : TextButton(
+                        onPressed: () => clear(),
+                        style:
+                            TextButton.styleFrom(minimumSize: Size(5.0, 5.0)),
+                        child: Icon(Icons.close,
+                            size: widget.size.fontSize! - 2,
+                            color: widget.style.color),
+                      ),
                 Container(
                   margin: EdgeInsets.only(right: 10.0),
-                  child: Icon(widget.style.arrowIcon, size: widget.size.fontSize, color: widget.style.color),
+                  child: Icon(widget.style.arrowIcon,
+                      size: widget.size.fontSize, color: widget.style.color),
                 )
               ],
             ),
@@ -271,22 +285,24 @@ class _BsSelectBoxState extends State<BsSelectBox> with SingleTickerProviderStat
 
   Widget renderSelected() {
     List<Widget> children = [];
-    if(!widget.selectBoxController.multiple)
+    if (!widget.selectBoxController.multiple)
       children.add(DefaultTextStyle(
         style: TextStyle(
           fontSize: widget.size.fontSize,
           color: widget.style.color,
         ),
-        child: Container(child: widget.selectBoxController.getSelected()!.getText()),
+        child: Container(
+            child: widget.selectBoxController.getSelected()!.getText()),
       ));
 
-    if(widget.selectBoxController.multiple)
+    if (widget.selectBoxController.multiple)
       widget.selectBoxController.getSelectedAll().forEach((option) {
         children.add(Container(
           margin: EdgeInsets.only(right: 5.0, bottom: 1.0, top: 1.0),
           child: TextButton(
             onPressed: () {
-              if(_keyOverlay.currentState != null && _keyOverlay.currentState!.mounted)
+              if (_keyOverlay.currentState != null &&
+                  _keyOverlay.currentState!.mounted)
                 _keyOverlay.currentState!.setState(() {});
 
               widget.selectBoxController.removeSelected(option);
@@ -294,7 +310,8 @@ class _BsSelectBoxState extends State<BsSelectBox> with SingleTickerProviderStat
             },
             style: TextButton.styleFrom(minimumSize: Size(5.0, 5.0)),
             child: Container(
-              padding: EdgeInsets.only(left: 8.0, right: 8.0, top: 1.5, bottom: 1.5),
+              padding:
+                  EdgeInsets.only(left: 8.0, right: 8.0, top: 1.5, bottom: 1.5),
               decoration: BoxDecoration(
                 color: widget.style.selectedBackgroundColor,
                 borderRadius: BorderRadius.all(Radius.circular(50.0)),
@@ -303,14 +320,18 @@ class _BsSelectBoxState extends State<BsSelectBox> with SingleTickerProviderStat
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(margin: EdgeInsets.only(right: 5.0), child: DefaultTextStyle(
-                    style: TextStyle(
-                      fontSize: widget.style.fontSize - 2,
-                      color: widget.style.selectedColor,
-                    ),
-                    child: option.getText(),
-                  )),
-                  Icon(Icons.close, size: widget.style.fontSize - 2, color: widget.style.selectedColor),
+                  Container(
+                      margin: EdgeInsets.only(right: 5.0),
+                      child: DefaultTextStyle(
+                        style: TextStyle(
+                          fontSize: widget.style.fontSize - 2,
+                          color: widget.style.selectedColor,
+                        ),
+                        child: option.getText(),
+                      )),
+                  Icon(Icons.close,
+                      size: widget.style.fontSize - 2,
+                      color: widget.style.selectedColor),
                 ],
               ),
             ),
@@ -325,42 +346,38 @@ class _BsSelectBoxState extends State<BsSelectBox> with SingleTickerProviderStat
     return AnimatedBuilder(
       animation: _animated,
       builder: (context, child) {
-
         double x = widget.size.labelX;
         double y = widget.size.labelY;
         double fontSize = widget.style.fontSize + 2.0;
 
-        if(widget.selectBoxController.getSelected() != null) {
+        if (widget.selectBoxController.getSelected() != null) {
           x = -widget.size.transitionLabelX;
           y = -widget.size.transitionLabelY;
           fontSize = widget.style.fontSize - 2.0;
-        }
-
-        else if(widget.selectBoxController.getSelected() != null && isOpen) {
+        } else if (widget.selectBoxController.getSelected() != null && isOpen) {
           x = -widget.size.transitionLabelX;
           y = -widget.size.transitionLabelY * _animated.value;
           fontSize = widget.style.fontSize - 2.0 * _animated.value;
         }
 
         return Transform(
-          transform: Matrix4.identity()
-            ..translate(x, y),
-          child: TextButton(
-            onPressed: pressed,
-            style: TextButton.styleFrom(
-              minimumSize: Size(5.0, 5.0),
-            ),
-            child: Container(
-              color: Colors.white,
-              child: Text(widget.hintTextLabel!, style: TextStyle(
-                color: widget.style.placeholderColor,
-                fontSize: fontSize,
-              ), overflow: TextOverflow.ellipsis),
-            ),
-          )
-        );
+            transform: Matrix4.identity()..translate(x, y),
+            child: TextButton(
+              onPressed: pressed,
+              style: TextButton.styleFrom(
+                minimumSize: Size(5.0, 5.0),
+              ),
+              child: Container(
+                color: Colors.white,
+                child: Text(widget.hintTextLabel!,
+                    style: TextStyle(
+                      color: widget.style.placeholderColor,
+                      fontSize: fontSize,
+                    ),
+                    overflow: TextOverflow.ellipsis),
+              ),
+            ));
       },
     );
   }
-
 }

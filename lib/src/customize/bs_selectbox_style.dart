@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class BsSelectBoxStyle {
-
   const BsSelectBoxStyle({
     this.borderRadius = const BorderRadius.all(Radius.circular(5.0)),
     this.fontSize = 12.0,

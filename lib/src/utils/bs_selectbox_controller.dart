@@ -2,7 +2,6 @@ import 'package:bs_flutter_selectbox/src/utils/bs_selectbox_option.dart';
 
 /// Class to controll [BsSelectBox]
 class BsSelectBoxController {
-
   /// Constructor [BsSelectBoxController]
   BsSelectBoxController({
     List<BsSelectBoxOption>? selected,
@@ -25,8 +24,7 @@ class BsSelectBoxController {
 
   /// to clear selected value of [BsSelectBox]
   void clear() {
-    if(_selected != null)
-      _selected = null;
+    if (_selected != null) _selected = null;
   }
 
   /// to set all options of [BsSelectBox]
@@ -40,14 +38,11 @@ class BsSelectBoxController {
 
   /// to set selected value of [BsSelectBox]
   void setSelected(BsSelectBoxOption option) {
-    if(!multiple)
-      _selected = [option];
+    if (!multiple) _selected = [option];
 
-    if(_selected == null)
-      _selected = [];
+    if (_selected == null) _selected = [];
 
-    if(multiple)
-      _selected!.add(option);
+    if (multiple) _selected!.add(option);
   }
 
   /// to set selected multiple value of [BsSelectBox]
@@ -55,35 +50,34 @@ class BsSelectBoxController {
 
   /// remove selected value with specific index
   void removeSelectedAt(int index) {
-    if(_selected != null) {
+    if (_selected != null) {
       _selected!.removeAt(index);
 
-      if (_selected!.length == 0)
-        clear();
+      if (_selected!.length == 0) clear();
     }
   }
 
   /// remove selected value
   void removeSelected(BsSelectBoxOption option) {
-    if(_selected != null) {
-      int index = _selected!.indexWhere((element) => element.getValue() == option.getValue());
-      if(index != -1)
-        _selected!.removeAt(index);
+    if (_selected != null) {
+      int index = _selected!
+          .indexWhere((element) => element.getValue() == option.getValue());
+      if (index != -1) _selected!.removeAt(index);
 
-      if (_selected!.length == 0)
-        clear();
+      if (_selected!.length == 0) clear();
     }
   }
 
   /// get first selected value, this function used when [BsSelectBox] not allowed multiple
-  BsSelectBoxOption? getSelected() => _selected != null ? _selected!.first : null;
+  BsSelectBoxOption? getSelected() =>
+      _selected != null ? _selected!.first : null;
 
   /// get all selected value, this function used when [BsSelectBox] allowd multiple
   List<BsSelectBoxOption> getSelectedAll() => _selected!;
 
   /// get selected value in string
   String? getSelectedAsString() {
-    if(_selected != null) {
+    if (_selected != null) {
       StringBuffer string = StringBuffer();
       _selected!.forEach((option) {
         string.write(option.getValueAsString() + ',');

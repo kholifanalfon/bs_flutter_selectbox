@@ -15,25 +15,20 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
-  BsSelectBoxController _select1 = BsSelectBoxController(
-    options: [
-      BsSelectBoxOption(value: 1, text: Text('1')),
-      BsSelectBoxOption(value: 2, text: Text('2')),
-      BsSelectBoxOption(value: 3, text: Text('3')),
-    ]
-  );
-  BsSelectBoxController _select2 = BsSelectBoxController(
-    multiple: true,
-    options: [
-      BsSelectBoxOption(value: 1, text: Text('1')),
-      BsSelectBoxOption(value: 2, text: Text('2')),
-      BsSelectBoxOption(value: 3, text: Text('3')),
-      BsSelectBoxOption(value: 4, text: Text('4')),
-      BsSelectBoxOption(value: 5, text: Text('5')),
-      BsSelectBoxOption(value: 6, text: Text('6')),
-    ]
-  );
+  BsSelectBoxController _select1 = BsSelectBoxController(options: [
+    BsSelectBoxOption(value: 1, text: Text('1')),
+    BsSelectBoxOption(value: 2, text: Text('2')),
+    BsSelectBoxOption(value: 3, text: Text('3')),
+  ]);
+  BsSelectBoxController _select2 =
+      BsSelectBoxController(multiple: true, options: [
+    BsSelectBoxOption(value: 1, text: Text('1')),
+    BsSelectBoxOption(value: 2, text: Text('2')),
+    BsSelectBoxOption(value: 3, text: Text('3')),
+    BsSelectBoxOption(value: 4, text: Text('4')),
+    BsSelectBoxOption(value: 5, text: Text('5')),
+    BsSelectBoxOption(value: 6, text: Text('6')),
+  ]);
   BsSelectBoxController _select3 = BsSelectBoxController();
 
   @override
@@ -44,7 +39,7 @@ class _MyAppState extends State<MyApp> {
   Future<BsSelectBoxResponse> selectApi(Map<String, String> params) async {
     Uri url = Uri.http('localhost', 'api-json.php', params);
     Response response = await http.get(url);
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       List json = convert.jsonDecode(response.body);
       return BsSelectBoxResponse.createFromJson(json);
     }

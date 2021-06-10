@@ -8,11 +8,11 @@ typedef BsRenderText = Widget Function(dynamic data);
 typedef BsSetOptionValue = dynamic Function(dynamic data);
 
 /// define function fo serverSide mode
-typedef BsSelectBoxServerSide = Future<BsSelectBoxResponse> Function(Map<String, String> params);
+typedef BsSelectBoxServerSide = Future<BsSelectBoxResponse> Function(
+    Map<String, String> params);
 
 /// class response to handle serverside response
 class BsSelectBoxResponse {
-
   /// Constructor [BsSelectBoxResponse]
   const BsSelectBoxResponse({
     this.options = const [],
@@ -24,11 +24,13 @@ class BsSelectBoxResponse {
   /// handle response from api with default setting
   ///
   /// In default setting this function will put value index for value option, and text index for text option from response data
-  factory BsSelectBoxResponse.createFromJson(List map, {BsSetOptionValue? value, BsRenderText? renderText}) {
+  factory BsSelectBoxResponse.createFromJson(List map,
+      {BsSetOptionValue? value, BsRenderText? renderText}) {
     return BsSelectBoxResponse(
-      options: map.map((e) {
-        return BsSelectBoxOption(value: value == null ? e['value'] : value(e), text: renderText == null ? Text(e['text']) : renderText(e));
-      }).toList()
-    );
+        options: map.map((e) {
+      return BsSelectBoxOption(
+          value: value == null ? e['value'] : value(e),
+          text: renderText == null ? Text(e['text']) : renderText(e));
+    }).toList());
   }
 }

@@ -2,17 +2,16 @@ import 'package:flutter/cupertino.dart';
 
 /// Class list options of  [BsSelectBox]
 class BsSelectBoxOption {
-
   /// Contruct [BsSelectBoxOption]
   const BsSelectBoxOption({
     required dynamic value,
     required Widget text,
     String? searchable,
     dynamic other,
-  }) : _searchable = searchable,
-    _value = value,
-    _text = text,
-    _other = other;
+  })  : _searchable = searchable,
+        _value = value,
+        _text = text,
+        _other = other;
 
   /// define dynamic value of [BsSelectBox] options
   final dynamic _value;
@@ -27,7 +26,8 @@ class BsSelectBoxOption {
   final String? _searchable;
 
   /// searchable getter function, when [searchable] not defined, this function will returned [value]
-  String get searchable => _searchable != null ? _searchable! : getValueAsString();
+  String get searchable =>
+      _searchable != null ? _searchable! : getValueAsString();
 
   /// get value of option
   dynamic getValue() => _value;

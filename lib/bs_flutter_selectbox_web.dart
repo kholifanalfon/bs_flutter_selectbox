@@ -31,7 +31,8 @@ class BsFlutterSelectboxWeb {
       default:
         throw PlatformException(
           code: 'Unimplemented',
-          details: 'bs_flutter_selectbox for web doesn\'t implement \'${call.method}\'',
+          details:
+              'bs_flutter_selectbox for web doesn\'t implement \'${call.method}\'',
         );
     }
   }
