@@ -57,6 +57,7 @@ After all is done copy the code below:
 
 ![Alt text](https://raw.githubusercontent.com/kholifanalfon/bs_flutter_selectbox/main/screenshot/select.png "Normal Select Box")
 
+
 If you need to customize size and style, use properties `style` and `size`. And create your custom size with class `BsSelectBoxSize` or `BsSelectBoxStyle` to custom style
 
 ```dart
@@ -83,6 +84,8 @@ If you need to customize size and style, use properties `style` and `size`. And 
 - `transitionLabelX` and `transitionLabelY` is used to set label position if using `hintTextLabel` when have selected value
 - `BsSelectBoxStyle` have properties `borderRadius`, `color`, `placeholderColor`, `selectedBackgroundColor`, `selectedColor`, `disabledBackgroundColor`, `backgroundColor`, `borderColor`, `fontSize`, `arrowIcon`
 
+### Select Box Style 2 (hintTextLabel)
+
 Select box using `hintTextLabel`
 ```dart
 // ...
@@ -94,6 +97,8 @@ Select box using `hintTextLabel`
 ```
 
 ![Alt text](https://raw.githubusercontent.com/kholifanalfon/bs_flutter_selectbox/main/screenshot/selectbox2.png "Label Hint Text Select Box")
+
+### Select Box Multiple
 
 To create a select box with multiple allowed set `multiple` properties in `BsSelectBoxController` to true:
 
@@ -114,6 +119,8 @@ To create a select box with multiple allowed set `multiple` properties in `BsSel
 ```
 
 ![Alt text](https://raw.githubusercontent.com/kholifanalfon/bs_flutter_selectbox/main/screenshot/selectbox3.png "Multiple Select Box")
+
+### Select Box Server Side
 
 To create a select box with server side data, use `serverSide` property 
 
