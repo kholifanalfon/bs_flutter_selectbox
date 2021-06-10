@@ -91,7 +91,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
   }
 
   void onFocus() {
-    if (_focusNode.hasFocus) open();
+    if (_focusNode.hasFocus && !widget.disabled) open();
   }
 
   void pressed() {
