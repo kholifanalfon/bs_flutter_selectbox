@@ -46,8 +46,6 @@ After create controller:
 
 After all is done copy the code below:
 
-![Alt text](https://raw.githubusercontent.com/kholifanalfon/bs_flutter_selectbox/main/screenshot/select.png "Normal Select Box")
-
 ```dart
 // ...
   BsSelectBox(
@@ -56,6 +54,8 @@ After all is done copy the code below:
   ),
 // ...
 ```
+
+![Alt text](https://raw.githubusercontent.com/kholifanalfon/bs_flutter_selectbox/main/screenshot/select.png "Normal Select Box")
 
 If you need to customize size and style, use properties `style` and `size`. And create your custom size with class `BsSelectBoxSize` or `BsSelectBoxStyle` to custom style
 
@@ -72,9 +72,16 @@ If you need to customize size and style, use properties `style` and `size`. And 
   );
 ```
 
+```dart
+  static const BsSelectBoxStyle outline = BsSelectBoxStyle(
+    borderRadius: BorderRadius.all(Radius.circular(5.0))
+  );
+```
+
 ### Note
 - `labelX` and `labelY` is used to set label position if using `hintTextLabel`
 - `transitionLabelX` and `transitionLabelY` is used to set label position if using `hintTextLabel` when have selected value
+- `BsSelectBoxStyle` have properties `borderRadius`, `color`, `placeholderColor`, `selectedBackgroundColor`, `selectedColor`, `disabledBackgroundColor`, `backgroundColor`, `borderColor`, `fontSize`, `arrowIcon`
 
 Select box using `hintTextLabel`
 ```dart
@@ -89,8 +96,6 @@ Select box using `hintTextLabel`
 ![Alt text](https://raw.githubusercontent.com/kholifanalfon/bs_flutter_selectbox/main/screenshot/selectbox2.png "Label Hint Text Select Box")
 
 To create a select box with multiple allowed set `multiple` properties in `BsSelectBoxController` to true:
-
-![Alt text](https://raw.githubusercontent.com/kholifanalfon/bs_flutter_selectbox/main/screenshot/selectbox3.png "Multiple Select Box")
 
 ```dart
 // ...
@@ -108,9 +113,9 @@ To create a select box with multiple allowed set `multiple` properties in `BsSel
 // ...
 ```
 
-To create a select box with server side data, use `serverSide` property 
+![Alt text](https://raw.githubusercontent.com/kholifanalfon/bs_flutter_selectbox/main/screenshot/selectbox3.png "Multiple Select Box")
 
-![Alt text](https://raw.githubusercontent.com/kholifanalfon/bs_flutter_selectbox/main/screenshot/selectbox4.png "Multiple Select Box")
+To create a select box with server side data, use `serverSide` property 
 
 ```dart
   BsSelectBox(
@@ -184,3 +189,5 @@ Json response data
   ]
 }
 ```
+
+![Alt text](https://raw.githubusercontent.com/kholifanalfon/bs_flutter_selectbox/main/screenshot/selectbox4.png "Server Side Select Box")
