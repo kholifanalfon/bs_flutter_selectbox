@@ -83,9 +83,8 @@ class BsSelectBoxController {
         string.write(option.getValueAsString() + ',');
       });
 
-      return string.toString().length > 0
-          ? string.toString().substring(0, string.toString().length - 1)
-          : null;
+      return string.toString().length == 0 ? null
+          : string.toString().substring(0, string.toString().length - 1);
     }
 
     return null;

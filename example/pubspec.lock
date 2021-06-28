@@ -15,13 +15,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  bs_flutter:
+  bs_flutter_buttons:
     dependency: "direct main"
     description:
-      name: bs_flutter
+      name: bs_flutter_buttons
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.1"
+    version: "1.0.1"
+  bs_flutter_modal:
+    dependency: "direct main"
+    description:
+      name: bs_flutter_modal
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
+  bs_flutter_responsive:
+    dependency: "direct main"
+    description:
+      name: bs_flutter_responsive
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   bs_flutter_selectbox:
     dependency: "direct main"
     description:

@@ -12,8 +12,6 @@ class BsWrapperOptions extends StatefulWidget {
     Key? key,
     required this.containerKey,
     required this.link,
-    required this.size,
-    required this.offset,
     required this.noDataText,
     required this.placeholderSearch,
     required this.selectBoxStyle,
@@ -28,12 +26,6 @@ class BsWrapperOptions extends StatefulWidget {
   State<StatefulWidget> createState() {
     return _BsWrapperOptionsState();
   }
-
-  /// To set size of [BsWrapperOptions] below of [BsSelectBox]
-  final Size size;
-
-  /// To set offset of [BsWrapperOptions] below of [BsSelectBox]
-  final Offset offset;
 
   /// define searchable of [BsSelectBox]
   final bool? searchable;
@@ -73,6 +65,9 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
   late FocusNode _focusNode;
   late TextEditingController _controller;
 
+  late Size _size;
+  late Offset _offset;
+
   Timer? _timer;
 
   @override
@@ -83,8 +78,12 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
 
     _controller = TextEditingController();
 
-    _overlayTop = widget.size.height + 2;
-    _overlayWidth = widget.size.width;
+    RenderBox renderBox = widget.containerKey.currentContext!.findRenderObject() as RenderBox;
+    _size = renderBox.size;
+    _offset = renderBox.localToGlobal(Offset.zero);
+
+    _overlayTop = _size.height + 2;
+    _overlayWidth = _size.width;
     super.initState();
   }
 
@@ -127,8 +126,8 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
     if (itemHeight <= _heightDialog) _heightDialog = itemHeight;
 
     double maxScreen = MediaQuery.of(context).size.height - 20.0;
-    if (widget.offset.dy + widget.size.height + _heightDialog > maxScreen)
-      _overlayTop = -(_heightDialog + widget.size.height + 25.0);
+    if (_offset.dy + _size.height + _heightDialog > maxScreen)
+      _overlayTop = -(_heightDialog + _size.height + 25.0);
 
     return Stack(
       children: [

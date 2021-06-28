@@ -7,8 +7,7 @@ class BsOverlay {
 
   /// add overlay entry when selectbox opened
   static BsOverlayEntry add(OverlayEntry overlayEntry, VoidCallback close) {
-    BsOverlayEntry bsOverlayEntry =
-        BsOverlayEntry(overlays.length, close, overlayEntry);
+    BsOverlayEntry bsOverlayEntry = BsOverlayEntry(overlays.length, close, overlayEntry);
     overlays.add(bsOverlayEntry);
 
     return bsOverlayEntry;

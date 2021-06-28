@@ -1,3 +1,7 @@
+### 1.0.2
+
+* Bug fix, after Navigator.pop() dialog overlay not showing
+
 ### 1.0.1
 
 * Bug fix, when it is disabled, the dialog can still be opened with the tab key

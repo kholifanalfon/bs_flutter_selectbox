@@ -13,8 +13,10 @@ dependencies:
     sdk: flutter
 
   http: ^0.13.3
-  bs_flutter: ^0.1.1
   bs_flutter_utils: ^1.0.0
+  bs_flutter_modal: ^1.0.1
+  bs_flutter_buttons: ^1.0.1
+  bs_flutter_responsive: ^1.0.0
   bs_flutter_selectbox:
     # When depending on this package from a real application you should use:
     #   bs_flutter_selectbox: ^x.y.z
