@@ -76,17 +76,17 @@ class BsSelectBoxController {
   List<BsSelectBoxOption> getSelectedAll() => _selected!;
 
   /// get selected value in string
-  String? getSelectedAsString() {
+  String getSelectedAsString() {
     if (_selected != null) {
       StringBuffer string = StringBuffer();
       _selected!.forEach((option) {
         string.write(option.getValueAsString() + ',');
       });
 
-      return string.toString().length == 0 ? null
+      return string.toString().length == 0 ? ''
           : string.toString().substring(0, string.toString().length - 1);
     }
 
-    return null;
+    return '';
   }
 }

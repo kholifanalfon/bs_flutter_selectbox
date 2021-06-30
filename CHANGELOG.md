@@ -1,4 +1,4 @@
-### 1.0.2
+### 1.0.3
 
 * Bug fix, after Navigator.pop() dialog overlay not showing
 
