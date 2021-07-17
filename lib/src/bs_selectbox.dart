@@ -54,7 +54,7 @@ class BsSelectBox extends StatefulWidget {
 
   final BsSelectBoxServerSide? serverSide;
 
-  final List<BsSelectValidators> validators;
+  final List<BsSelectValidator> validators;
 }
 
 class _BsSelectBoxState extends State<BsSelectBox>
