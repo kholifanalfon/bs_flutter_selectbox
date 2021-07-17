@@ -25,8 +25,14 @@ class _MyAppState extends State<MyApp> {
     BsSelectBoxOption(value: 2, text: Text('2')),
     BsSelectBoxOption(value: 3, text: Text('3')),
   ]);
-  BsSelectBoxController _select2 =
-      BsSelectBoxController(multiple: true, options: [
+
+  BsSelectBoxController _select2 = BsSelectBoxController(options: [
+    BsSelectBoxOption(value: 1, text: Text('1')),
+    BsSelectBoxOption(value: 2, text: Text('2')),
+    BsSelectBoxOption(value: 3, text: Text('3')),
+  ]);
+
+  BsSelectBoxController _select3 = BsSelectBoxController(multiple: true, options: [
     BsSelectBoxOption(value: 1, text: Text('1')),
     BsSelectBoxOption(value: 2, text: Text('2')),
     BsSelectBoxOption(value: 3, text: Text('3')),
@@ -34,7 +40,18 @@ class _MyAppState extends State<MyApp> {
     BsSelectBoxOption(value: 5, text: Text('5')),
     BsSelectBoxOption(value: 6, text: Text('6')),
   ]);
-  BsSelectBoxController _select3 = BsSelectBoxController();
+
+  BsSelectBoxController _select4 = BsSelectBoxController();
+  BsSelectBoxController _select5 = BsSelectBoxController();
+
+  BsSelectBoxController _select6 = BsSelectBoxController(multiple: true, options: [
+    BsSelectBoxOption(value: 1, text: Text('1')),
+    BsSelectBoxOption(value: 2, text: Text('2')),
+    BsSelectBoxOption(value: 3, text: Text('3')),
+    BsSelectBoxOption(value: 4, text: Text('4')),
+    BsSelectBoxOption(value: 5, text: Text('5')),
+    BsSelectBoxOption(value: 6, text: Text('6')),
+  ]);
 
   @override
   void initState() {
@@ -56,69 +73,67 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        appBar: AppBar(
+          title: Text('Select Box'),
+        ),
         body: Container(
+          padding: EdgeInsets.all(20.0),
           child: Form(
             key: _formState,
             child: Column(
               children: [
-                BsRow(
-                  gutter: EdgeInsets.only(left: 10.0, right: 10.0),
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    BsCol(
-                      sizes: ColScreen(sm: Col.col_2),
-                      child: BsSelectBox(
-                        hintText: 'Pilih salah satu',
-                        selectBoxController: _select1,
-                        validators: [
-                          BsSelectValidators.required
-                        ],
-                      ),
-                    ),
-                    BsCol(
-                      sizes: ColScreen(sm: Col.col_2),
-                      child: BsSelectBox(
-                        hintTextLabel: 'Pilih salah satu',
-                        selectBoxController: _select1,
-                      ),
-                    ),
-                    BsCol(
-                      sizes: ColScreen(sm: Col.col_2),
-                      child: BsSelectBox(
-                        hintText: 'Pilih multiple',
-                        selectBoxController: _select2,
-                      ),
-                    ),
-                    BsCol(
-                      sizes: ColScreen(sm: Col.col_2),
-                      child: BsSelectBox(
-                        searchable: true,
-                        disabled: true,
-                        hintText: 'Pilih salah satu',
-                        selectBoxController: _select2,
-                      ),
-                    ),
-                    BsCol(
-                      sizes: ColScreen(sm: Col.col_2),
-                      child: BsSelectBox(
-                        hintText: 'Pilih salah satu',
-                        searchable: true,
-                        selectBoxController: _select3,
-                        serverSide: selectApi,
-                      ),
-                    ),
-                    BsCol(
-                      sizes: ColScreen(sm: Col.col_2),
-                      child: BsButton(
-                        label: Text('Validate'),
-                        prefixIcon: Icons.open_in_new,
-                        style: BsButtonStyle.primary,
-                        onPressed: () {
-                          _formState.currentState!.validate();
-                        },
-                      ),
-                    )
-                  ],
+                Container(
+                  margin: EdgeInsets.only(bottom: 10.0),
+                  child: BsSelectBox(
+                    hintText: 'Pilih salah satu',
+                    selectBoxController: _select1,
+                    validators: [
+                      BsSelectValidators.required
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 10.0),
+                  child: BsSelectBox(
+                    hintTextLabel: 'Pilih salah satu',
+                    selectBoxController: _select2,
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 10.0),
+                  child: BsSelectBox(
+                    hintText: 'Pilih multiple',
+                    selectBoxController: _select3,
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 10.0),
+                  child: BsSelectBox(
+                    searchable: true,
+                    disabled: true,
+                    hintText: 'Pilih salah satu',
+                    selectBoxController: _select5,
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 10.0),
+                  child: BsSelectBox(
+                    hintText: 'Pilih salah satu',
+                    searchable: true,
+                    selectBoxController: _select4,
+                    serverSide: selectApi,
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 10.0),
+                  child: BsButton(
+                    label: Text('Validate'),
+                    prefixIcon: Icons.open_in_new,
+                    style: BsButtonStyle.primary,
+                    onPressed: () {
+                      _formState.currentState!.validate();
+                    },
+                  ),
                 ),
                 BsButton(
                   label: Text('Open Modal'),
@@ -140,7 +155,7 @@ class _MyAppState extends State<MyApp> {
                                     child: BsSelectBox(
                                       hintText: 'Pilih salah satu',
                                       searchable: true,
-                                      selectBoxController: _select3,
+                                      selectBoxController: _select6,
                                       serverSide: selectApi,
                                     ),
                                   )

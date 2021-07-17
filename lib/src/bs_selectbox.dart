@@ -237,13 +237,13 @@ class _BsSelectBoxState extends State<BsSelectBox>
 
         BoxBorder? border = widget.style.border;
         if (isOpen)
-          border = Border.all(color: Colors.black);
+          border = widget.style.borderFocused;
 
         if (field.hasError)
           border = Border.all(color: BsColor.danger);
 
         List<BoxShadow> boxShadow = [];
-        if (_focusNode.hasFocus)
+        if (isOpen)
           boxShadow = widget.style.boxShadowFocused;
 
         if (field.hasError && widget.style.boxShadowFocused.length != 0)
@@ -317,6 +317,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
                 color: widget.disabled ? widget.style.disabledBackgroundColor : widget.style.backgroundColor,
                 border: border,
                 borderRadius: widget.style.borderRadius,
+                boxShadow: boxShadow
               ),
               child: Row(
                 children: [
@@ -333,6 +334,17 @@ class _BsSelectBoxState extends State<BsSelectBox>
                         maxLines: 1,
                       ) : renderSelected(),
                     )
+                  ),
+                  !isOpen ? Container(width: 0, height: 0) : Container(
+                    margin: EdgeInsets.only(right: 5.0),
+                    child: TextButton(
+                      onPressed: () => close(),
+                      style: TextButton.styleFrom(minimumSize: Size(5.0, 5.0)),
+                      child: Icon(Icons.check,
+                        size: widget.size.fontSize! - 2,
+                        color: widget.style.color
+                      ),
+                    ),
                   ),
                   widget.selectBoxController.getSelected() == null ? Container(width: 0, height: 0) : TextButton(
                     onPressed: () => clear(),
@@ -438,6 +450,13 @@ class _BsSelectBoxState extends State<BsSelectBox>
           fontSize = widget.style.fontSize - 2.0 * _animated.value;
         }
 
+        Color color = widget.style.placeholderColor;
+        if(isOpen)
+          color = widget.style.colorFocused;
+
+        if(!valid)
+          color = BsColor.danger;
+
         return Transform(
           transform: Matrix4.identity()..translate(x, y),
           child: TextButton(
@@ -447,7 +466,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
               color: Colors.white,
               child: Text(widget.hintTextLabel!,
                 style: TextStyle(
-                  color: valid ? widget.style.placeholderColor : BsColor.textError,
+                  color: color,
                   fontSize: fontSize,
                 ),
                 overflow: TextOverflow.ellipsis

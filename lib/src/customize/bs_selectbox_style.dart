@@ -14,6 +14,8 @@ class BsSelectBoxStyle {
     this.backgroundColor = Colors.white,
     this.arrowIcon = Icons.arrow_drop_down,
     this.boxShadowFocused = const [],
+    this.borderFocused,
+    this.colorFocused = BsColor.primary
   });
 
   /// define border radius of [BsSelectBox]
@@ -48,6 +50,10 @@ class BsSelectBoxStyle {
 
   final List<BoxShadow> boxShadowFocused;
 
+  final BoxBorder? borderFocused;
+
+  final Color colorFocused;
+
   static const BsSelectBoxStyle bordered = BsSelectBoxStyle(
     border: Border(
       top: BorderSide(color: BsColor.borderColor),
@@ -61,6 +67,12 @@ class BsSelectBoxStyle {
         offset: Offset(0, 0),
         spreadRadius: 2.5,
       )
-    ]
+    ],
+    borderFocused: Border(
+      top: BorderSide(color: BsColor.primary),
+      bottom: BorderSide(color: BsColor.primary),
+      left: BorderSide(color: BsColor.primary),
+      right: BorderSide(color: BsColor.primary),
+    )
   );
 }

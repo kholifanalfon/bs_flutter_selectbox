@@ -1,7 +1,8 @@
-### 1.1.1
+### 1.1.2
 
 * Minor bug fixed
 * Add form validating selectbox
+* Close button
 
 ### 1.0.3
 
