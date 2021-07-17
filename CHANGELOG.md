@@ -1,3 +1,8 @@
+### 1.1.0
+
+* Minor bug fixed
+* Add form validating selectbox
+
 ### 1.0.3
 
 * Bug fix, after Navigator.pop() dialog overlay not showing
