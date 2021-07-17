@@ -2,7 +2,9 @@ import 'package:bs_flutter_selectbox/bs_flutter_selectbox.dart';
 import 'package:bs_flutter_selectbox/src/components/bs_wrapper_option.dart';
 import 'package:bs_flutter_selectbox/src/utils/bs_selectbox_controller.dart';
 import 'package:bs_flutter_selectbox/src/utils/bs_serverside.dart';
+import 'package:bs_flutter_utils/bs_flutter_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 export 'customize/bs_selectbox_size.dart';
 export 'customize/bs_selectbox_style.dart';
@@ -18,10 +20,11 @@ class BsSelectBox extends StatefulWidget {
     this.noDataText = 'No data found',
     this.placeholderSearch = 'Search ...',
     this.size = const BsSelectBoxSize(),
-    this.style = const BsSelectBoxStyle(),
+    this.style = BsSelectBoxStyle.bordered,
     this.serverSide,
     this.searchable = false,
     this.disabled = false,
+    this.validators = const [],
   }) : super(key: key);
 
   @override
@@ -50,25 +53,32 @@ class BsSelectBox extends StatefulWidget {
   final BsSelectBoxController selectBoxController;
 
   final BsSelectBoxServerSide? serverSide;
+
+  final List<BsSelectValidators> validators;
 }
 
 class _BsSelectBoxState extends State<BsSelectBox>
     with SingleTickerProviderStateMixin {
-  late GlobalKey<State> _key = GlobalKey<State>();
-  late GlobalKey<State> _keyOverlay = GlobalKey<State>();
+  GlobalKey<State> _key = GlobalKey<State>();
+  GlobalKey<State> _keyOverlay = GlobalKey<State>();
 
   Duration duration = Duration(milliseconds: 100);
   bool isOpen = false;
   late FocusNode _focusNode;
+  late FocusNode _focusNodeKeyboard;
 
   late LayerLink _layerLink;
   late AnimationController _animated;
   late List<BsSelectBoxOption> _options;
 
+  late FormFieldState formFieldState;
+
   @override
   void initState() {
     _focusNode = widget.focusNode == null ? FocusNode() : widget.focusNode!;
     _focusNode.addListener(onFocus);
+
+    _focusNodeKeyboard = FocusNode();
 
     _layerLink = LayerLink();
     _options = widget.selectBoxController.options;
@@ -93,6 +103,11 @@ class _BsSelectBoxState extends State<BsSelectBox>
 
   void onFocus() {
     if (_focusNode.hasFocus && !widget.disabled) open();
+  }
+
+  void onKeyPressed(RawKeyEvent event) {
+    if(event.logicalKey == LogicalKeyboardKey.escape)
+      close();
   }
 
   void updateState(Function function) {
@@ -141,6 +156,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
         noDataText: widget.noDataText!,
         placeholderSearch: widget.placeholderSearch!,
         selectBoxController: widget.selectBoxController,
+        onClose: () => close(),
         onChange: (option) {
           if (widget.selectBoxController.multiple) {
             if (widget.selectBoxController.getSelected() != null) {
@@ -160,6 +176,8 @@ class _BsSelectBoxState extends State<BsSelectBox>
 
             close();
           }
+
+          formFieldState.didChange(option.getValueAsString());
         },
         onSearch: (value) {
           if (widget.serverSide != null) {
@@ -178,6 +196,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
     }), () => updateState(() => isOpen = false));
 
     Overlay.of(context)!.insert(overlayEntry.overlayEntry);
+    FocusScope.of(context).requestFocus(_focusNodeKeyboard);
     
     if (widget.serverSide != null) api();
 
@@ -185,7 +204,6 @@ class _BsSelectBoxState extends State<BsSelectBox>
   }
 
   void close() {
-    print('Close');
     BsOverlay.removeAll();
     _animated.reverse();
 
@@ -195,74 +213,144 @@ class _BsSelectBoxState extends State<BsSelectBox>
   void clear() {
     BsOverlay.removeAll();
     widget.selectBoxController.clear();
+    formFieldState.didChange(widget.selectBoxController.getSelectedAsString());
     updateState(() => _focusNode.requestFocus());
   }
 
+  String? _errorText;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Stack(
-        children: [
-          renderContainer(),
-          widget.hintTextLabel == null
-            ? Container(width: 0, height: 0)
-            : renderHintLabel(),
-        ],
-      ),
+    return FormField(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      initialValue: widget.selectBoxController.getSelectedAsString() == '' ? null : widget.selectBoxController.getSelectedAsString(),
+      validator: (value) {
+        _errorText = null;
+        widget.validators.map((validator) {
+          if (_errorText == null)
+            _errorText = validator.validator(value);
+        }).toList();
+        return _errorText;
+      },
+      builder: (field) {
+        formFieldState = field;
+
+        BoxBorder? border = widget.style.border;
+        if (isOpen)
+          border = Border.all(color: Colors.black);
+
+        if (field.hasError)
+          border = Border.all(color: BsColor.danger);
+
+        List<BoxShadow> boxShadow = [];
+        if (_focusNode.hasFocus)
+          boxShadow = widget.style.boxShadowFocused;
+
+        if (field.hasError && widget.style.boxShadowFocused.length != 0)
+          boxShadow = [
+            BoxShadow(
+              color: BsColor.dangerShadow,
+              offset: Offset(0, 0),
+              spreadRadius: 2.5,
+            )
+          ];
+
+        return Column(
+          children: [
+            Container(
+              child: Stack(
+                children: [
+                  renderContainer(
+                    valid: !field.hasError,
+                    border: border,
+                    boxShadow: boxShadow,
+                    onChange: (value) => field.didChange(value),
+                  ),
+                  widget.hintTextLabel == null ? Container(width: 0, height: 0)
+                      : renderHintLabel(!field.hasError),
+                ],
+              ),
+            ),
+            !field.hasError ? Container() : Container(
+              margin: EdgeInsets.only(top: 5.0, left: 2.0),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                field.errorText!,
+                style: TextStyle(
+                  fontSize: 12.0,
+                  color: BsColor.textError
+                ),
+              ),
+            )
+          ],
+        );
+      },
+      onSaved: (value) {
+        formFieldState.didChange(value);
+        formFieldState.validate();
+      },
     );
   }
 
-  Widget renderContainer() {
+  Widget renderContainer({
+    required bool valid,
+    required ValueChanged<String> onChange,
+    BoxBorder? border,
+    List<BoxShadow> boxShadow = const []
+  }) {
     return CompositedTransformTarget(
       link: _layerLink,
-      child: TextButton(
-        key: _key,
-        focusNode: _focusNode,
-        onPressed: pressed,
-        style: TextButton.styleFrom(),
-        child: DefaultTextStyle(
-          style: TextStyle(
-            color: widget.style.color,
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              color: widget.disabled ? widget.style.disabledBackgroundColor : widget.style.backgroundColor,
-              border: Border.all(color: !isOpen ? widget.style.borderColor : Colors.black),
-              borderRadius: widget.style.borderRadius,
+      child: RawKeyboardListener(
+        focusNode: _focusNodeKeyboard,
+        onKey: onKeyPressed,
+        child: TextButton(
+          key: _key,
+          focusNode: _focusNode,
+          onPressed: pressed,
+          style: TextButton.styleFrom(),
+          child: DefaultTextStyle(
+            style: TextStyle(
+              color: widget.style.color,
             ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    padding: widget.size.padding,
-                    child: widget.selectBoxController.getSelected() == null
-                      ? widget.hintText == null ? Text('') : Text(
-                          widget.hintText!,
-                          style: TextStyle(
-                            color: widget.style.placeholderColor,
-                            fontSize: widget.style.fontSize + 2),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        )
-                      : renderSelected(),
+            child: Container(
+              decoration: BoxDecoration(
+                color: widget.disabled ? widget.style.disabledBackgroundColor : widget.style.backgroundColor,
+                border: border,
+                borderRadius: widget.style.borderRadius,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: widget.size.padding,
+                      child: widget.selectBoxController.getSelected() == null ? widget.hintText == null ? Text('') : Text(
+                        widget.hintText!,
+                        style: TextStyle(
+                          color: valid ? widget.style.placeholderColor : Colors.red,
+                          fontSize: widget.style.fontSize + 2
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ) : renderSelected(),
+                    )
+                  ),
+                  widget.selectBoxController.getSelected() == null ? Container(width: 0, height: 0) : TextButton(
+                    onPressed: () => clear(),
+                    style: TextButton.styleFrom(minimumSize: Size(5.0, 5.0)),
+                    child: Icon(Icons.close,
+                      size: widget.size.fontSize! - 2,
+                      color: widget.style.color
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(right: 10.0),
+                    child: Icon(widget.style.arrowIcon,
+                      size: widget.size.fontSize,
+                      color: valid ? widget.style.color : Colors.red,
+                    ),
                   )
-                ),
-                widget.selectBoxController.getSelected() == null ? Container(width: 0, height: 0) : TextButton(
-                  onPressed: () => clear(),
-                  style: TextButton.styleFrom(minimumSize: Size(5.0, 5.0)),
-                  child: Icon(Icons.close,
-                    size: widget.size.fontSize! - 2,
-                    color: widget.style.color
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(right: 10.0),
-                  child: Icon(widget.style.arrowIcon,
-                    size: widget.size.fontSize,
-                    color: widget.style.color
-                  ),
-                )
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -292,6 +380,9 @@ class _BsSelectBoxState extends State<BsSelectBox>
                 _keyOverlay.currentState!.setState(() {});
 
               widget.selectBoxController.removeSelected(option);
+
+              formFieldState.didChange(widget.selectBoxController.getSelectedAsString());
+
               updateState(() {});
             },
             style: TextButton.styleFrom(minimumSize: Size(5.0, 5.0)),
@@ -329,7 +420,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
     return Wrap(children: children);
   }
 
-  Widget renderHintLabel() {
+  Widget renderHintLabel(bool valid) {
     return AnimatedBuilder(
       animation: _animated,
       builder: (context, child) {
@@ -356,7 +447,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
               color: Colors.white,
               child: Text(widget.hintTextLabel!,
                 style: TextStyle(
-                  color: widget.style.placeholderColor,
+                  color: valid ? widget.style.placeholderColor : BsColor.textError,
                   fontSize: fontSize,
                 ),
                 overflow: TextOverflow.ellipsis

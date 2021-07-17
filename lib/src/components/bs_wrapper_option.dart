@@ -4,6 +4,7 @@ import 'package:bs_flutter_selectbox/bs_flutter_selectbox.dart';
 import 'package:bs_flutter_selectbox/src/utils/bs_selectbox_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// Wrapper overlay of options
 class BsWrapperOptions extends StatefulWidget {
@@ -18,6 +19,7 @@ class BsWrapperOptions extends StatefulWidget {
     required this.selectBoxSize,
     required this.selectBoxController,
     required this.onChange,
+    required this.onClose,
     this.searchable = false,
     this.onSearch,
   }) : super(key: key);
@@ -56,6 +58,8 @@ class BsWrapperOptions extends StatefulWidget {
 
   /// define on change action of [BsWrapperOption] below of [BsSelectBox]
   final ValueChanged<BsSelectBoxOption> onChange;
+
+  final VoidCallback onClose;
 }
 
 class _BsWrapperOptionsState extends State<BsWrapperOptions> {
@@ -72,7 +76,12 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
 
   @override
   void initState() {
-    _focusNode = FocusNode();
+    _focusNode = FocusNode(onKey: (node, event) {
+      if(event.logicalKey == LogicalKeyboardKey.escape)
+        widget.onClose();
+
+      return false;
+    });
     _focusNode.addListener(onFocus);
     _focusNode.requestFocus();
 
@@ -87,7 +96,7 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
     super.initState();
   }
 
-  void onFocus() => setState(() {});
+  void onFocus() => updateState(() {});
 
   @override
   void dispose() {
@@ -101,6 +110,13 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
     _timer = Timer(Duration(milliseconds: 300), () => callback(value));
   }
 
+  void updateState(VoidCallback function) {
+    if(mounted)
+      setState(() {
+        function();
+      });
+  }
+
   @override
   Widget build(BuildContext context) {
     Future.delayed(Duration(milliseconds: 100), () {
@@ -109,7 +125,7 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
       if (mounted &&
           (_overlayTop != renderBox.size.height + 2 ||
               _overlayWidth != renderBox.size.width)) {
-        setState(() {
+        updateState(() {
           _overlayTop = renderBox.size.height + 2;
           _overlayWidth = renderBox.size.width;
         });
@@ -142,8 +158,7 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
                 padding: EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    border:
-                        Border.all(color: widget.selectBoxStyle.borderColor),
+                    border: widget.selectBoxStyle.border,
                     borderRadius: widget.selectBoxStyle.borderRadius,
                     boxShadow: [
                       BoxShadow(
@@ -159,8 +174,7 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
                         ? Container()
                         : Container(
                             decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: widget.selectBoxStyle.borderColor),
+                              border: widget.selectBoxStyle.border,
                               borderRadius:
                                   BorderRadius.all(Radius.circular(5.0)),
                             ),
@@ -250,7 +264,7 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
                                             onPressed: () {
                                               widget.onChange(option);
                                               _focusNode.unfocus();
-                                              setState(() {});
+                                              updateState(() {});
                                             },
                                             style: TextButton.styleFrom(
                                                 backgroundColor: color),
