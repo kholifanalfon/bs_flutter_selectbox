@@ -20,6 +20,7 @@ class BsWrapperOptions extends StatefulWidget {
     required this.selectBoxController,
     required this.onChange,
     required this.onClose,
+    required this.containerMargin,
     this.searchable = false,
     this.onSearch,
   }) : super(key: key);
@@ -60,11 +61,14 @@ class BsWrapperOptions extends StatefulWidget {
   final ValueChanged<BsSelectBoxOption> onChange;
 
   final VoidCallback onClose;
+
+  final EdgeInsets containerMargin;
 }
 
 class _BsWrapperOptionsState extends State<BsWrapperOptions> {
-  late double _overlayTop;
-  late double _overlayWidth;
+
+  GlobalKey<State> _key = GlobalKey<State>();
+  GlobalKey<State> _keyAll = GlobalKey<State>();
 
   late FocusNode _focusNode;
   late TextEditingController _controller;
@@ -72,7 +76,12 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
   late Size _size;
   late Offset _offset;
 
+  double _overlayTop = 0;
+  double _overlayHeight = 0;
+
   Timer? _timer;
+
+  bool _done = false;
 
   @override
   void initState() {
@@ -90,9 +99,6 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
     RenderBox renderBox = widget.containerKey.currentContext!.findRenderObject() as RenderBox;
     _size = renderBox.size;
     _offset = renderBox.localToGlobal(Offset.zero);
-
-    _overlayTop = _size.height + 2;
-    _overlayWidth = _size.width;
     super.initState();
   }
 
@@ -117,188 +123,208 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
       });
   }
 
+  void _checkHeight() {
+    Future.delayed(Duration(milliseconds: 100), () {
+      /// Getting source size and offset from container toggle
+
+      RenderBox renderBoxAll = _keyAll.currentContext!.findRenderObject() as RenderBox;
+      Size sizeAll = renderBoxAll.size;
+
+      RenderBox renderBox = _key.currentContext!.findRenderObject() as RenderBox;
+      Size size = renderBox.size;
+      Size screenSize = MediaQuery.of(context).size;
+
+      _overlayHeight = size.height;
+      _overlayTop = _size.height + 2.0;
+
+      Offset overlayMaxPosition = Offset(_offset.dx + _size.width + size.width, _offset.dy + _size.height + _overlayHeight);
+
+      double topHeight = _offset.dy + _size.height - 10;
+      double bottomHeight = screenSize.height - (_offset.dy + 10);
+
+      if(overlayMaxPosition.dy > screenSize.height) {
+        if (bottomHeight > topHeight) {
+          if (bottomHeight > widget.selectBoxSize.maxHeight)
+            _overlayHeight = widget.selectBoxSize.maxHeight;
+          else
+            _overlayHeight = bottomHeight;
+        }
+
+        else {
+          if(size.height <= widget.selectBoxSize.maxHeight)
+            _overlayHeight = size.height;
+          else if (topHeight > widget.selectBoxSize.maxHeight)
+            _overlayHeight = widget.selectBoxSize.maxHeight;
+          else
+            _overlayHeight = topHeight;
+
+          _overlayTop = -sizeAll.height - 2;
+        }
+      }
+
+      else {
+        if(size.height > widget.selectBoxSize.maxHeight)
+          _overlayHeight = widget.selectBoxSize.maxHeight;
+      }
+
+      updateState(() {
+        _done = true;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration(milliseconds: 100), () {
-      RenderBox renderBox =
-          widget.containerKey.currentContext!.findRenderObject() as RenderBox;
-      if (mounted &&
-          (_overlayTop != renderBox.size.height + 2 ||
-              _overlayWidth != renderBox.size.width)) {
-        updateState(() {
-          _overlayTop = renderBox.size.height + 2;
-          _overlayWidth = renderBox.size.width;
-        });
-      }
-    });
+    if(!_done)
+      _checkHeight();
 
-    double _heightDialog = 250.0;
-    double itemHeight = 0;
-
-    widget.selectBoxController.options.map((e) {
-      itemHeight += 37.0;
-    }).toList();
-
-    if (itemHeight <= _heightDialog) _heightDialog = itemHeight;
-
-    double maxScreen = MediaQuery.of(context).size.height - 20.0;
-    if (_offset.dy + _size.height + _heightDialog > maxScreen)
-      _overlayTop = -(_heightDialog + _size.height + 25.0);
-
-    return Stack(
-      children: [
-        Positioned(
-          width: _overlayWidth,
-          child: CompositedTransformFollower(
-            link: widget.link,
-            showWhenUnlinked: false,
-            offset: Offset(0.0, _overlayTop),
-            child: Material(
-              child: Container(
-                padding: EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: widget.selectBoxStyle.border,
-                    borderRadius: widget.selectBoxStyle.borderRadius,
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 8.0,
-                          spreadRadius: 0.0,
-                          offset: Offset(2.0, 2.0))
-                    ]),
+    return Opacity(
+      opacity: _done ? 1 : 0,
+      child: Container(
+        child: Stack(
+          children: [
+            Positioned(
+              child: CompositedTransformFollower(
+                link: widget.link,
+                showWhenUnlinked: false,
+                offset: Offset(0, _overlayTop),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    !widget.searchable!
-                        ? Container()
-                        : Container(
-                            decoration: BoxDecoration(
-                              border: widget.selectBoxStyle.border,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5.0)),
-                            ),
-                            child: TextField(
-                              focusNode: _focusNode,
-                              controller: _controller,
-                              decoration: InputDecoration(
-                                hintText: widget.placeholderSearch,
-                                hintStyle: TextStyle(
-                                    fontSize: widget
-                                        .selectBoxSize.searchInputFontSize),
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.all(12.0),
-                                isDense: true,
+                    Material(
+                      child: Container(
+                        key: _keyAll,
+                        width: _size.width,
+                        padding: widget.selectBoxSize.paddingWrapper,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: widget.selectBoxStyle.border,
+                          borderRadius: widget.selectBoxStyle.borderRadius,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 8.0,
+                              spreadRadius: 0.0,
+                              offset: Offset(2.0, 2.0)
+                            )
+                          ]
+                        ),
+                        child: Column(
+                          children: [
+                            !widget.searchable! ? Container() : Container(
+                              margin: EdgeInsets.only(bottom: 5.0),
+                              decoration: BoxDecoration(
+                                border: widget.selectBoxStyle.border,
+                                borderRadius: BorderRadius.all(Radius.circular(5.0)),
                               ),
-                              onChanged: (value) => doneTyping(value, (value) {
-                                if (widget.onSearch != null)
-                                  widget.onSearch!(value);
-                              }),
-                            )),
-                    !widget.selectBoxController.processing
-                        ? Container()
-                        : Center(
-                            child: Container(
-                                padding: EdgeInsets.only(
-                                    left: 12.0,
-                                    right: 12.0,
-                                    top: 5.0,
-                                    bottom: 5.0),
+                              child: TextField(
+                                focusNode: _focusNode,
+                                controller: _controller,
+                                decoration: InputDecoration(
+                                  hintText: widget.placeholderSearch,
+                                  hintStyle: TextStyle(
+                                      fontSize: widget.selectBoxSize.searchInputFontSize
+                                  ),
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(12.0),
+                                  isDense: true,
+                                ),
+                                onChanged: (value) => doneTyping(value, (value) {
+                                  if (widget.onSearch != null)
+                                    widget.onSearch!(value);
+                                }),
+                              )
+                            ),
+                            !widget.selectBoxController.processing ? Container() : Center(
+                              child: Container(
+                                padding: EdgeInsets.fromLTRB(12.0, 5.0, 12.0, 5.0),
                                 margin: EdgeInsets.only(top: 8.0),
                                 child: Text("Memproses ...",
-                                    style: TextStyle(
-                                        fontSize:
-                                            widget.selectBoxSize.optionFontSize,
-                                        fontWeight: FontWeight.w100,
-                                        fontStyle: FontStyle.italic))),
-                          ),
-                    widget.selectBoxController.processing ||
-                            widget.selectBoxController.options.length != 0
-                        ? Container()
-                        : Center(
-                            child: Container(
-                                margin: EdgeInsets.only(top: 8.0),
-                                padding: EdgeInsets.only(
-                                    left: 12.0,
-                                    right: 12.0,
-                                    top: 5.0,
-                                    bottom: 5.0),
-                                child: Text(widget.noDataText,
-                                    style: TextStyle(
-                                        fontSize:
-                                            widget.selectBoxSize.optionFontSize,
-                                        fontWeight: FontWeight.w100,
-                                        fontStyle: FontStyle.italic))),
-                          ),
-                    widget.selectBoxController.processing ||
-                            widget.selectBoxController.options.length == 0
-                        ? Container()
-                        : Container(
-                            height: _heightDialog,
-                            margin: EdgeInsets.only(top: 5.0),
-                            child: Scrollbar(
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: widget.selectBoxController.options
-                                      .map((option) {
-                                    Color color = Colors.white;
-                                    if (widget.selectBoxController
-                                            .getSelected() !=
-                                        null) {
-                                      int index = widget.selectBoxController
-                                          .getSelectedAll()
-                                          .indexWhere((element) =>
-                                              element.getValue() ==
-                                              option.getValue());
-                                      if (index != -1)
-                                        color = Color(0xfff1f1f1);
-                                    }
-
-                                    return Row(
-                                      children: [
-                                        Expanded(
-                                            child: Container(
-                                          margin: EdgeInsets.only(bottom: 2.0),
-                                          child: TextButton(
-                                            onPressed: () {
-                                              widget.onChange(option);
-                                              _focusNode.unfocus();
-                                              updateState(() {});
-                                            },
-                                            style: TextButton.styleFrom(
-                                                backgroundColor: color),
-                                            child: DefaultTextStyle(
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: widget.selectBoxSize
-                                                      .optionFontSize),
-                                              child: Container(
-                                                alignment: Alignment.centerLeft,
-                                                padding: EdgeInsets.only(
-                                                    left: 12.0,
-                                                    right: 12.0,
-                                                    top: 10.0,
-                                                    bottom: 10.0),
-                                                child: option.getText(),
-                                              ),
-                                            ),
-                                          ),
-                                        ))
-                                      ],
-                                    );
-                                  }).toList(),
-                                ),
+                                  style: TextStyle(
+                                    fontSize: widget.selectBoxSize.optionFontSize,
+                                    fontWeight: FontWeight.w100,
+                                    fontStyle: FontStyle.italic
+                                  )
+                                )
                               ),
                             ),
-                          )
+                            widget.selectBoxController.processing || widget.selectBoxController.options.length != 0 ? Container() : Center(
+                              child: Container(
+                                margin: EdgeInsets.only(top: 8.0),
+                                padding: EdgeInsets.fromLTRB(12.0, 5.0, 12.0, 5.0),
+                                child: Text(widget.noDataText,
+                                  style: TextStyle(
+                                    fontSize: widget.selectBoxSize.optionFontSize,
+                                    fontWeight: FontWeight.w100,
+                                    fontStyle: FontStyle.italic
+                                  )
+                                )
+                              ),
+                            ),
+                            widget.selectBoxController.processing || widget.selectBoxController.options.length == 0 ? Container(key: _key) : Container(
+                              key: _key,
+                              height: _overlayHeight == 0 ? null : _overlayHeight,
+                              child: Scrollbar(
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: widget.selectBoxController.options.map((option) {
+                                      Color color = Colors.white;
+                                      if (widget.selectBoxController.getSelected() != null) {
+                                        int index = widget.selectBoxController.getSelectedAll()
+                                            .indexWhere((element) => element.getValue() == option.getValue());
+
+                                        if (index != -1)
+                                          color = Color(0xfff1f1f1);
+                                      }
+
+                                      return Row(
+                                        children: [
+                                          Expanded(
+                                            child: Container(
+                                              margin: EdgeInsets.only(bottom: 2.0),
+                                              child: Material(
+                                                color: color,
+                                                borderRadius: BorderRadius.circular(5.0),
+                                                child: InkWell(
+                                                    onTap: () {
+                                                      widget.onChange(option);
+                                                      _focusNode.unfocus();
+                                                      updateState(() {});
+                                                    },
+                                                    child: DefaultTextStyle(
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: widget.selectBoxSize.optionFontSize
+                                                      ),
+                                                      child: Container(
+                                                        alignment: Alignment.centerLeft,
+                                                        padding: EdgeInsets.fromLTRB(12.0, 10.0, 12.0, 10.0),
+                                                        child: option.getText(),
+                                                      ),
+                                                    ),
+                                                    borderRadius: BorderRadius.circular(5.0)
+                                                ),
+                                              ),
+                                            )
+                                          )
+                                        ],
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),
-            ),
-          ),
-        )
-      ],
+            )
+          ],
+        ),
+      ),
     );
   }
 }

@@ -59,7 +59,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<BsSelectBoxResponse> selectApi(Map<String, String> params) async {
-    Uri url = Uri.http('localhost', 'api-json.php', params);
+    Uri url = Uri.http('192.168.1.7', 'api-json.php', params);
     Response response = await http.get(url);
     if (response.statusCode == 200) {
       List json = convert.jsonDecode(response.body);
@@ -76,99 +76,115 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: Text('Select Box'),
         ),
-        body: Container(
-          padding: EdgeInsets.all(20.0),
-          child: Form(
-            key: _formState,
-            child: Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(bottom: 10.0),
-                  child: BsSelectBox(
-                    hintText: 'Pilih salah satu',
-                    selectBoxController: _select1,
-                    validators: [
-                      BsSelectValidators.required
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 10.0),
-                  child: BsSelectBox(
-                    hintTextLabel: 'Pilih salah satu',
-                    selectBoxController: _select2,
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 10.0),
-                  child: BsSelectBox(
-                    hintText: 'Pilih multiple',
-                    selectBoxController: _select3,
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 10.0),
-                  child: BsSelectBox(
-                    searchable: true,
-                    disabled: true,
-                    hintText: 'Pilih salah satu',
-                    selectBoxController: _select5,
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 10.0),
-                  child: BsSelectBox(
-                    hintText: 'Pilih salah satu',
-                    searchable: true,
-                    selectBoxController: _select4,
-                    serverSide: selectApi,
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 10.0),
-                  child: BsButton(
-                    label: Text('Validate'),
-                    prefixIcon: Icons.open_in_new,
-                    style: BsButtonStyle.primary,
-                    onPressed: () {
-                      _formState.currentState!.validate();
-                    },
-                  ),
-                ),
-                BsButton(
-                  label: Text('Open Modal'),
-                  prefixIcon: Icons.open_in_new,
-                  style: BsButtonStyle.primary,
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => BsModal(
-                        context: context,
-                        dialog: BsModalDialog(
-                          child: BsModalContent(
-                            children: [
-                              BsModalContainer(title: Text('Modal Select Box'), closeButton: true),
-                              BsModalContainer(child: Column(
-                                children: [
-                                  BsCol(
-                                    sizes: ColScreen(sm: Col.col_2),
-                                    child: BsSelectBox(
-                                      hintText: 'Pilih salah satu',
-                                      searchable: true,
-                                      selectBoxController: _select6,
-                                      serverSide: selectApi,
-                                    ),
-                                  )
-                                ],
-                              ))
-                            ],
-                          ),
-                        ),
+        body: Scrollbar(
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.all(20.0),
+              child: Form(
+                key: _formState,
+                child: Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10.0),
+                      child: BsSelectBox(
+                        hintText: 'Pilih salah satu',
+                        selectBoxController: _select1,
+                        validators: [
+                          BsSelectValidators.required
+                        ],
                       ),
-                    );
-                  },
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10.0),
+                      child: BsSelectBox(
+                        hintTextLabel: 'Pilih salah satu',
+                        selectBoxController: _select2,
+                        searchable: true,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10.0),
+                      child: BsSelectBox(
+                        hintText: 'Pilih multiple',
+                        selectBoxController: _select3,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10.0),
+                      child: BsSelectBox(
+                        searchable: true,
+                        disabled: true,
+                        hintText: 'Pilih salah satu',
+                        selectBoxController: _select5,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10.0),
+                      child: BsSelectBox(
+                        hintText: 'Pilih salah satu',
+                        searchable: true,
+                        selectBoxController: _select4,
+                        serverSide: selectApi,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10.0),
+                      child: BsButton(
+                        label: Text('Validate'),
+                        prefixIcon: Icons.open_in_new,
+                        style: BsButtonStyle.primary,
+                        onPressed: () {
+                          _formState.currentState!.validate();
+                        },
+                      ),
+                    ),
+                    BsButton(
+                      label: Text('Open Modal'),
+                      prefixIcon: Icons.open_in_new,
+                      style: BsButtonStyle.primary,
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => BsModal(
+                            context: context,
+                            dialog: BsModalDialog(
+                              child: BsModalContent(
+                                children: [
+                                  BsModalContainer(title: Text('Modal Select Box'), closeButton: true),
+                                  BsModalContainer(child: Column(
+                                    children: [
+                                      BsCol(
+                                        sizes: ColScreen(sm: Col.col_2),
+                                        child: BsSelectBox(
+                                          hintText: 'Pilih salah satu',
+                                          searchable: true,
+                                          selectBoxController: _select6,
+                                          serverSide: selectApi,
+                                        ),
+                                      )
+                                    ],
+                                  ))
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10.0),
+                      child: BsSelectBox(
+                        margin: EdgeInsets.only(top: 200.0),
+                        hintText: 'Pilih salah satu',
+                        selectBoxController: _select1,
+                        validators: [
+                          BsSelectValidators.required
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
