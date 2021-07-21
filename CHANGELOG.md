@@ -1,8 +1,9 @@
-### 1.1.2
+### 1.1.3
 
 * Minor bug fixed
 * Add form validating selectbox
 * Close button
+* Mobile bug padding
 
 ### 1.0.3
 
