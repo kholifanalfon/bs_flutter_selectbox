@@ -10,7 +10,7 @@ class BsSelectBoxSize {
     this.labelY = 0.0,
     this.transitionLabelX = -8.0,
     this.transitionLabelY = 45,
-    this.padding = const EdgeInsets.all(14.0),
+    this.padding = const EdgeInsets.all(12.0),
     this.paddingWrapper = const EdgeInsets.all(10.0)
   });
 
