@@ -1,4 +1,4 @@
-### 1.1.10
+### 1.1.11
 
 * Minor bug fixed
 * Add form validating selectbox

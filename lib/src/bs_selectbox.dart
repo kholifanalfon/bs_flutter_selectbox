@@ -26,6 +26,7 @@ class BsSelectBox extends StatefulWidget {
     this.searchable = false,
     this.disabled = false,
     this.validators = const [],
+    this.onChange,
   }) : super(key: key);
 
   @override
@@ -58,6 +59,8 @@ class BsSelectBox extends StatefulWidget {
   final List<BsSelectValidator> validators;
 
   final EdgeInsets margin;
+
+  final ValueChanged<BsSelectBoxOption>? onChange;
 }
 
 class _BsSelectBoxState extends State<BsSelectBox>
@@ -181,6 +184,9 @@ class _BsSelectBoxState extends State<BsSelectBox>
 
           close();
         }
+
+        if(widget.onChange != null)
+          widget.onChange!(option);
 
         formFieldState.didChange(option.getValueAsString());
       },
