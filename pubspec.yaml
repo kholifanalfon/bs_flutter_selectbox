@@ -1,6 +1,6 @@
 name: bs_flutter_selectbox
 description: Web html select option with serverside, look like select2 library
-version: 1.1.12
+version: 1.1.13
 homepage: https://github.com/kholifanalfon/bs_flutter_selectbox
 
 environment:

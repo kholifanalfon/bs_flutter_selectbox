@@ -108,9 +108,6 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
 
     widget._update = () {
       _checkHeight();
-      setState(() {
-        _done = false;
-      });
     };
     super.initState();
   }
@@ -276,53 +273,56 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
                             widget.selectBoxController.processing || widget.selectBoxController.options.length == 0 ? Container(key: _key) : Container(
                               key: _key,
                               height: _overlayHeight == 0 ? null : _overlayHeight,
-                              child: Scrollbar(
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: widget.selectBoxController.options.map((option) {
-                                      Color color = Colors.white;
-                                      if (widget.selectBoxController.getSelected() != null) {
-                                        int index = widget.selectBoxController.getSelectedAll()
-                                            .indexWhere((element) => element.getValue() == option.getValue());
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(maxHeight: widget.selectBoxSize.maxHeight),
+                                child: Scrollbar(
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: widget.selectBoxController.options.map((option) {
+                                        Color color = Colors.white;
+                                        if (widget.selectBoxController.getSelected() != null) {
+                                          int index = widget.selectBoxController.getSelectedAll()
+                                              .indexWhere((element) => element.getValue() == option.getValue());
 
-                                        if (index != -1)
-                                          color = Color(0xfff1f1f1);
-                                      }
+                                          if (index != -1)
+                                            color = Color(0xfff1f1f1);
+                                        }
 
-                                      return Row(
-                                        children: [
-                                          Expanded(
-                                            child: Container(
-                                              margin: EdgeInsets.only(bottom: 2.0),
-                                              child: Material(
-                                                color: color,
-                                                borderRadius: BorderRadius.circular(5.0),
-                                                child: InkWell(
-                                                    onTap: () {
-                                                      widget.onChange(option);
-                                                      _focusNode.unfocus();
-                                                      updateState(() {});
-                                                    },
-                                                    child: DefaultTextStyle(
-                                                      style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize: widget.selectBoxSize.optionFontSize
-                                                      ),
-                                                      child: Container(
-                                                        alignment: Alignment.centerLeft,
-                                                        padding: EdgeInsets.fromLTRB(12.0, 10.0, 12.0, 10.0),
-                                                        child: option.getText(),
-                                                      ),
+                                        return Row(
+                                          children: [
+                                            Expanded(
+                                                child: Container(
+                                                  margin: EdgeInsets.only(bottom: 2.0),
+                                                  child: Material(
+                                                    color: color,
+                                                    borderRadius: BorderRadius.circular(5.0),
+                                                    child: InkWell(
+                                                        onTap: () {
+                                                          widget.onChange(option);
+                                                          _focusNode.unfocus();
+                                                          updateState(() {});
+                                                        },
+                                                        child: DefaultTextStyle(
+                                                          style: TextStyle(
+                                                              color: Colors.black,
+                                                              fontSize: widget.selectBoxSize.optionFontSize
+                                                          ),
+                                                          child: Container(
+                                                            alignment: Alignment.centerLeft,
+                                                            padding: EdgeInsets.fromLTRB(12.0, 10.0, 12.0, 10.0),
+                                                            child: option.getText(),
+                                                          ),
+                                                        ),
+                                                        borderRadius: BorderRadius.circular(5.0)
                                                     ),
-                                                    borderRadius: BorderRadius.circular(5.0)
-                                                ),
-                                              ),
+                                                  ),
+                                                )
                                             )
-                                          )
-                                        ],
-                                      );
-                                    }).toList(),
+                                          ],
+                                        );
+                                      }).toList(),
+                                    ),
                                   ),
                                 ),
                               ),
