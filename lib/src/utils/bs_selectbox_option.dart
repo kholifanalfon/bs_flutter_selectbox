@@ -37,4 +37,6 @@ class BsSelectBoxOption {
 
   /// get text of option
   Widget getText() => _text;
+
+  dynamic getOtherValue() => _other;
 }
