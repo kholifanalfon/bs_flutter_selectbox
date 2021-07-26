@@ -109,6 +109,7 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
     widget._update = () {
       _checkHeight();
       setState(() {
+        _done = false;
       });
     };
     super.initState();
