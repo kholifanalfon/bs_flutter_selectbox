@@ -24,12 +24,13 @@ class BsSelectBoxResponse {
   /// handle response from api with default setting
   ///
   /// In default setting this function will put value index for value option, and text index for text option from response data
-  factory BsSelectBoxResponse.createFromJson(List map, {BsSetOptionValue? value, BsRenderText? renderText}) {
+  factory BsSelectBoxResponse.createFromJson(List map, {BsSetOptionValue? value, BsRenderText? renderText, BsSetOptionValue? other}) {
     return BsSelectBoxResponse(
       options: map.map((e) {
         return BsSelectBoxOption(
           value: value == null ? e['value'] : value(e),
-          text: renderText == null ? Text(e['text']) : renderText(e)
+          text: renderText == null ? Text(e['text']) : renderText(e),
+          other: other == null ? e : other(e),
         );
     }).toList());
   }
