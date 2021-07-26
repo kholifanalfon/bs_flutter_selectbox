@@ -76,6 +76,8 @@ class _BsSelectBoxState extends State<BsSelectBox>
 
   late FormFieldState formFieldState;
 
+  BsWrapperOptions? _wrapperOptions;
+
   @override
   void initState() {
     _focusNode = widget.focusNode == null ? FocusNode() : widget.focusNode!;
@@ -137,8 +139,8 @@ class _BsSelectBoxState extends State<BsSelectBox>
         updateState(() {
           widget.selectBoxController.processing = false;
           widget.selectBoxController.options = response.options;
-          if (_keyOverlay.currentState != null  && _keyOverlay.currentState!.mounted)
-            _keyOverlay.currentState!.setState(() {});
+          if (_wrapperOptions != null)
+            _wrapperOptions!.update();
         });
       });
     });
@@ -148,55 +150,57 @@ class _BsSelectBoxState extends State<BsSelectBox>
     BsOverlay.removeAll();
     _animated.forward();
 
+    _wrapperOptions = BsWrapperOptions(
+      key: _keyOverlay,
+      link: _layerLink,
+      containerKey: _key,
+      selectBoxStyle: widget.style,
+      selectBoxSize: widget.size,
+      searchable: widget.searchable,
+      noDataText: widget.noDataText!,
+      placeholderSearch: widget.placeholderSearch!,
+      selectBoxController: widget.selectBoxController,
+      containerMargin: widget.margin,
+      onClose: () => close(),
+      onChange: (option) {
+        if (widget.selectBoxController.multiple) {
+          if (widget.selectBoxController.getSelected() != null) {
+            int index = widget.selectBoxController.getSelectedAll()
+                .indexWhere((element) => element.getValue() == option.getValue());
+
+            if (index != -1) widget.selectBoxController.removeSelectedAt(index);
+            else widget.selectBoxController.setSelected(option);
+
+          } else widget.selectBoxController.setSelected(option);
+
+          updateState(() {});
+        }
+
+        if (!widget.selectBoxController.multiple) {
+          widget.selectBoxController.setSelected(option);
+
+          close();
+        }
+
+        formFieldState.didChange(option.getValueAsString());
+      },
+      onSearch: (value) {
+        if (widget.serverSide != null) {
+          api(searchValue: value);
+        } else {
+          updateState(() {
+            widget.selectBoxController.options = _options.where((element) {
+              return value == '' || element.searchable.contains(value);
+            }).toList();
+            if (_keyOverlay.currentState != null && _keyOverlay.currentState!.mounted)
+              _keyOverlay.currentState!.setState(() {});
+          });
+        }
+      },
+    );
+
     BsOverlayEntry overlayEntry = BsOverlay.add(OverlayEntry(builder: (context) {
-      return BsWrapperOptions(
-        key: _keyOverlay,
-        link: _layerLink,
-        containerKey: _key,
-        selectBoxStyle: widget.style,
-        selectBoxSize: widget.size,
-        searchable: widget.searchable,
-        noDataText: widget.noDataText!,
-        placeholderSearch: widget.placeholderSearch!,
-        selectBoxController: widget.selectBoxController,
-        containerMargin: widget.margin,
-        onClose: () => close(),
-        onChange: (option) {
-          if (widget.selectBoxController.multiple) {
-            if (widget.selectBoxController.getSelected() != null) {
-              int index = widget.selectBoxController.getSelectedAll()
-                  .indexWhere((element) => element.getValue() == option.getValue());
-
-              if (index != -1) widget.selectBoxController.removeSelectedAt(index);
-              else widget.selectBoxController.setSelected(option);
-
-            } else widget.selectBoxController.setSelected(option);
-
-            updateState(() {});
-          }
-
-          if (!widget.selectBoxController.multiple) {
-            widget.selectBoxController.setSelected(option);
-
-            close();
-          }
-
-          formFieldState.didChange(option.getValueAsString());
-        },
-        onSearch: (value) {
-          if (widget.serverSide != null) {
-            api(searchValue: value);
-          } else {
-            updateState(() {
-              widget.selectBoxController.options = _options.where((element) {
-                return value == '' || element.searchable.contains(value);
-              }).toList();
-              if (_keyOverlay.currentState != null && _keyOverlay.currentState!.mounted)
-                _keyOverlay.currentState!.setState(() {});
-            });
-          }
-        },
-      );
+      return _wrapperOptions!;
     }), () => updateState(() => isOpen = false));
 
     Overlay.of(context)!.insert(overlayEntry.overlayEntry);

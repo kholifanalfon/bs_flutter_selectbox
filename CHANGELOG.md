@@ -1,9 +1,10 @@
-### 1.1.6
+### 1.1.7
 
 * Minor bug fixed
 * Add form validating selectbox
 * Close button
 * Mobile bug padding
+* Maximum height when using serverSide
 
 ### 1.0.3
 

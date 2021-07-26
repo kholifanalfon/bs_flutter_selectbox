@@ -59,7 +59,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<BsSelectBoxResponse> selectApi(Map<String, String> params) async {
-    Uri url = Uri.http('192.168.1.7', 'api-json.php', params);
+    Uri url = Uri.http('localhost', 'api-json.php', params);
     Response response = await http.get(url);
     if (response.statusCode == 200) {
       List json = convert.jsonDecode(response.body);

@@ -63,6 +63,12 @@ class BsWrapperOptions extends StatefulWidget {
   final VoidCallback onClose;
 
   final EdgeInsets containerMargin;
+
+  Function _update = () {};
+
+  void update() {
+    _update();
+  }
 }
 
 class _BsWrapperOptionsState extends State<BsWrapperOptions> {
@@ -99,6 +105,12 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
     RenderBox renderBox = widget.containerKey.currentContext!.findRenderObject() as RenderBox;
     _size = renderBox.size;
     _offset = renderBox.localToGlobal(Offset.zero);
+
+    widget._update = () {
+      _checkHeight();
+      setState(() {
+      });
+    };
     super.initState();
   }
 
