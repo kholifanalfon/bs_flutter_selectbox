@@ -1,3 +1,6 @@
+### 1.2.0
+* Custom style
+
 ### 1.1.13
 
 * Minor bug fixed

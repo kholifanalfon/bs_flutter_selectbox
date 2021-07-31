@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
 class BsSelectBoxSize {
   const BsSelectBoxSize({
     this.maxHeight = 300.0,
@@ -8,19 +6,11 @@ class BsSelectBoxSize {
     this.searchInputFontSize = 14.0,
     this.labelX = 15.0,
     this.labelY = 0.0,
-    this.transitionLabelX = -8.0,
-    this.transitionLabelY = 45,
-    this.padding = const EdgeInsets.all(12.0),
-    this.paddingWrapper = const EdgeInsets.all(10.0)
+    this.transitionLabelX = 8.0,
+    this.transitionLabelY = -40.0,
   });
 
   final double maxHeight;
-
-  /// define padding of [BsSelectBox]
-  final EdgeInsetsGeometry padding;
-
-  /// define padding of [BsSelectBox]
-  final EdgeInsetsGeometry paddingWrapper;
 
   /// define font size of [BsSelectBox]
   final double? fontSize;

@@ -5,36 +5,41 @@ class BsSelectBoxStyle {
   const BsSelectBoxStyle({
     this.borderRadius = const BorderRadius.all(Radius.circular(5.0)),
     this.fontSize = 12.0,
-    this.selectedBackgroundColor = const Color(0xfff1f1f1),
-    this.selectedColor = const Color(0xff212529),
-    this.color = const Color(0xff212529),
-    this.placeholderColor = Colors.grey,
+    this.selectedColor = const Color(0xfff1f1f1),
+    this.selectedTextColor = const Color(0xfff1f1f1),
+    this.textColor = const Color(0xff212529),
+    this.hintTextColor = Colors.grey,
     this.border,
-    this.disabledBackgroundColor = const Color(0xffe7e7e7),
+    this.disabledColor = const Color(0xffe7e7e7),
+    this.disabledTextColor = const Color(0xffdedede),
     this.backgroundColor = Colors.white,
     this.arrowIcon = Icons.arrow_drop_down,
-    this.boxShadowFocused = const [],
-    this.borderFocused,
-    this.colorFocused = BsColor.primary
+    this.focusedBoxShadow = const [],
+    this.focusedBorder,
+    this.focusedTextColor = BsColor.primary,
+    this.searchColor = Colors.white,
+    this.searchTextColor = const Color(0xff212529)
   });
 
   /// define border radius of [BsSelectBox]
   final BorderRadiusGeometry? borderRadius;
 
   /// define color of [BsSelectBox]
-  final Color color;
+  final Color textColor;
 
-  /// define placeholderColor of [BsSelectBox]
-  final Color placeholderColor;
+  /// define hintTextColor of [BsSelectBox]
+  final Color hintTextColor;
 
   /// define selectedBackgroundColor of [BsSelectBox]
-  final Color selectedBackgroundColor;
-
-  /// define selectedColor of [BsSelectBox]
   final Color selectedColor;
 
-  /// define of disabledBackgroundColor of [BsSelectBox]
-  final Color disabledBackgroundColor;
+  /// define selectedColor of [BsSelectBox]
+  final Color selectedTextColor;
+
+  /// define of disabledColor of [BsSelectBox]
+  final Color disabledColor;
+
+  final Color disabledTextColor;
 
   /// define of backgroundColor of [BsSelectBox]
   final Color backgroundColor;
@@ -48,11 +53,15 @@ class BsSelectBoxStyle {
   /// defien arrowIcon of [BsSelectBox]
   final IconData arrowIcon;
 
-  final List<BoxShadow> boxShadowFocused;
+  final List<BoxShadow> focusedBoxShadow;
 
-  final BoxBorder? borderFocused;
+  final BoxBorder? focusedBorder;
 
-  final Color colorFocused;
+  final Color focusedTextColor;
+
+  final Color searchColor;
+
+  final Color searchTextColor;
 
   static const BsSelectBoxStyle bordered = BsSelectBoxStyle(
     border: Border(
@@ -61,14 +70,14 @@ class BsSelectBoxStyle {
       left: BorderSide(color: BsColor.borderColor),
       right: BorderSide(color: BsColor.borderColor),
     ),
-    boxShadowFocused: [
+    focusedBoxShadow: [
       BoxShadow(
         color: BsColor.primaryShadow,
         offset: Offset(0, 0),
         spreadRadius: 2.5,
       )
     ],
-    borderFocused: Border(
+    focusedBorder: Border(
       top: BorderSide(color: BsColor.primary),
       bottom: BorderSide(color: BsColor.primary),
       left: BorderSide(color: BsColor.primary),

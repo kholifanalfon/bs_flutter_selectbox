@@ -1,5 +1,6 @@
 import 'package:bs_flutter_selectbox/bs_flutter_selectbox.dart';
 import 'package:bs_flutter_selectbox/src/components/bs_wrapper_option.dart';
+import 'package:bs_flutter_selectbox/src/customize/bs_dialogbox_style.dart';
 import 'package:bs_flutter_selectbox/src/utils/bs_selectbox_controller.dart';
 import 'package:bs_flutter_selectbox/src/utils/bs_serverside.dart';
 import 'package:bs_flutter_utils/bs_flutter_utils.dart';
@@ -13,8 +14,9 @@ export 'utils/bs_overlay.dart';
 class BsSelectBox extends StatefulWidget {
   const BsSelectBox({
     Key? key,
-    required this.selectBoxController,
+    required this.controller,
     this.margin = EdgeInsets.zero,
+    this.padding = const EdgeInsets.all(12.0),
     this.focusNode,
     this.hintText,
     this.hintTextLabel,
@@ -27,6 +29,9 @@ class BsSelectBox extends StatefulWidget {
     this.disabled = false,
     this.validators = const [],
     this.onChange,
+    this.dialogStyle = const BsDialogBoxStyle(),
+    this.paddingDialog = const EdgeInsets.all(10.0),
+    this.marginDialog = const EdgeInsets.only(top: 2.0, bottom: 2.0)
   }) : super(key: key);
 
   @override
@@ -52,7 +57,7 @@ class BsSelectBox extends StatefulWidget {
 
   final bool disabled;
 
-  final BsSelectBoxController selectBoxController;
+  final BsSelectBoxController controller;
 
   final BsSelectBoxServerSide? serverSide;
 
@@ -60,7 +65,15 @@ class BsSelectBox extends StatefulWidget {
 
   final EdgeInsets margin;
 
+  final EdgeInsets padding;
+
   final ValueChanged<BsSelectBoxOption>? onChange;
+
+  final BsDialogBoxStyle dialogStyle;
+
+  final EdgeInsetsGeometry paddingDialog;
+
+  final EdgeInsets marginDialog;
 }
 
 class _BsSelectBoxState extends State<BsSelectBox>
@@ -89,7 +102,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
     _focusNodeKeyboard = FocusNode();
 
     _layerLink = LayerLink();
-    _options = widget.selectBoxController.options;
+    _options = widget.controller.options;
 
     _animated = AnimationController(vsync: this, duration: duration);
 
@@ -134,14 +147,14 @@ class _BsSelectBoxState extends State<BsSelectBox>
 
   void api({String searchValue = ''}) {
     updateState(() {
-      widget.selectBoxController.processing = true;
+      widget.controller.processing = true;
       if (_keyOverlay.currentState != null && _keyOverlay.currentState!.mounted)
         _keyOverlay.currentState!.setState(() {});
 
       widget.serverSide!({'searchValue': searchValue}).then((response) {
         updateState(() {
-          widget.selectBoxController.processing = false;
-          widget.selectBoxController.options = response.options;
+          widget.controller.processing = false;
+          widget.controller.options = response.options;
           if (_wrapperOptions != null)
             _wrapperOptions!.update();
         });
@@ -157,30 +170,33 @@ class _BsSelectBoxState extends State<BsSelectBox>
       key: _keyOverlay,
       link: _layerLink,
       containerKey: _key,
+      padding: widget.paddingDialog,
+      margin: widget.marginDialog,
       selectBoxStyle: widget.style,
       selectBoxSize: widget.size,
+      style: widget.dialogStyle,
       searchable: widget.searchable,
       noDataText: widget.noDataText!,
       placeholderSearch: widget.placeholderSearch!,
-      selectBoxController: widget.selectBoxController,
+      controller: widget.controller,
       containerMargin: widget.margin,
       onClose: () => close(),
       onChange: (option) {
-        if (widget.selectBoxController.multiple) {
-          if (widget.selectBoxController.getSelected() != null) {
-            int index = widget.selectBoxController.getSelectedAll()
+        if (widget.controller.multiple) {
+          if (widget.controller.getSelected() != null) {
+            int index = widget.controller.getSelectedAll()
                 .indexWhere((element) => element.getValue() == option.getValue());
 
-            if (index != -1) widget.selectBoxController.removeSelectedAt(index);
-            else widget.selectBoxController.setSelected(option);
+            if (index != -1) widget.controller.removeSelectedAt(index);
+            else widget.controller.setSelected(option);
 
-          } else widget.selectBoxController.setSelected(option);
+          } else widget.controller.setSelected(option);
 
           updateState(() {});
         }
 
-        if (!widget.selectBoxController.multiple) {
-          widget.selectBoxController.setSelected(option);
+        if (!widget.controller.multiple) {
+          widget.controller.setSelected(option);
 
           close();
         }
@@ -195,7 +211,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
           api(searchValue: value);
         } else {
           updateState(() {
-            widget.selectBoxController.options = _options.where((element) {
+            widget.controller.options = _options.where((element) {
               return value == '' || element.searchable.contains(value);
             }).toList();
             if (_keyOverlay.currentState != null && _keyOverlay.currentState!.mounted)
@@ -226,8 +242,8 @@ class _BsSelectBoxState extends State<BsSelectBox>
 
   void clear() {
     BsOverlay.removeAll();
-    widget.selectBoxController.clear();
-    formFieldState.didChange(widget.selectBoxController.getSelectedAsString());
+    widget.controller.clear();
+    formFieldState.didChange(widget.controller.getSelectedAsString());
     updateState(() => _focusNode.requestFocus());
   }
 
@@ -247,7 +263,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
       },
       child: FormField(
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        initialValue: widget.selectBoxController.getSelectedAsString() == '' ? null : widget.selectBoxController.getSelectedAsString(),
+        initialValue: widget.controller.getSelectedAsString() == '' ? null : widget.controller.getSelectedAsString(),
         validator: (value) {
           _errorText = null;
           widget.validators.map((validator) {
@@ -258,24 +274,24 @@ class _BsSelectBoxState extends State<BsSelectBox>
         },
         builder: (field) {
           Future.delayed(Duration(milliseconds: 100), () {
-            if (field.mounted && widget.selectBoxController.getSelectedAsString() != '')
-              field.didChange(widget.selectBoxController.getSelectedAsString());
+            if (field.mounted && widget.controller.getSelectedAsString() != '')
+              field.didChange(widget.controller.getSelectedAsString());
           });
 
           formFieldState = field;
 
           BoxBorder? border = widget.style.border;
           if (isOpen)
-            border = widget.style.borderFocused;
+            border = widget.style.focusedBorder;
 
           if (field.hasError)
             border = Border.all(color: BsColor.danger);
 
           List<BoxShadow> boxShadow = [];
           if (isOpen)
-            boxShadow = widget.style.boxShadowFocused;
+            boxShadow = widget.style.focusedBoxShadow;
 
-          if (field.hasError && widget.style.boxShadowFocused.length != 0)
+          if (field.hasError && widget.style.focusedBoxShadow.length != 0)
             boxShadow = [
               BoxShadow(
                 color: BsColor.dangerShadow,
@@ -347,11 +363,11 @@ class _BsSelectBoxState extends State<BsSelectBox>
           ),
           child: DefaultTextStyle(
             style: TextStyle(
-              color: widget.style.color,
+              color: widget.style.textColor,
             ),
             child: Container(
               decoration: BoxDecoration(
-                color: widget.disabled ? widget.style.disabledBackgroundColor : widget.style.backgroundColor,
+                color: widget.disabled ? widget.style.disabledColor : widget.style.backgroundColor,
                 border: border,
                 borderRadius: widget.style.borderRadius,
                 boxShadow: boxShadow
@@ -360,11 +376,11 @@ class _BsSelectBoxState extends State<BsSelectBox>
                 children: [
                   Expanded(
                     child: Container(
-                      padding: widget.size.padding,
-                      child: widget.selectBoxController.getSelected() == null ? widget.hintText == null ? Text('') : Text(
+                      padding: widget.padding,
+                      child: widget.controller.getSelected() == null ? widget.hintText == null ? Text('') : Text(
                         widget.hintText!,
                         style: TextStyle(
-                          color: valid ? widget.style.placeholderColor : Colors.red,
+                          color: valid ? widget.style.hintTextColor : Colors.red,
                           fontSize: widget.style.fontSize + 2
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -380,12 +396,12 @@ class _BsSelectBoxState extends State<BsSelectBox>
                         onTap: () => close(),
                         child: Icon(Icons.check,
                           size: widget.size.fontSize! - 2,
-                          color: widget.style.color
+                          color: widget.style.textColor
                         ),
                       ),
                     ),
                   ),
-                  widget.selectBoxController.getSelected() == null ? Container(width: 0, height: 0) : Container(
+                  widget.controller.getSelected() == null ? Container(width: 0, height: 0) : Container(
                     padding: EdgeInsets.all(5.0),
                     child: Material(
                       color: Colors.transparent,
@@ -393,7 +409,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
                         onTap: () => clear(),
                         child: Icon(Icons.close,
                           size: widget.size.fontSize! - 2,
-                          color: widget.style.color
+                          color: widget.style.textColor
                         ),
                       ),
                     ),
@@ -402,7 +418,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
                     margin: EdgeInsets.only(right: 10.0),
                     child: Icon(widget.style.arrowIcon,
                       size: widget.size.fontSize,
-                      color: valid ? widget.style.color : Colors.red,
+                      color: valid ? widget.style.textColor : Colors.red,
                     ),
                   )
                 ],
@@ -416,17 +432,17 @@ class _BsSelectBoxState extends State<BsSelectBox>
 
   Widget renderSelected() {
     List<Widget> children = [];
-    if (!widget.selectBoxController.multiple)
+    if (!widget.controller.multiple)
       children.add(DefaultTextStyle(
         style: TextStyle(
           fontSize: widget.size.fontSize,
-          color: widget.style.color,
+          color: widget.style.textColor,
         ),
-        child: Container(child: widget.selectBoxController.getSelected()!.getText()),
+        child: Container(child: widget.controller.getSelected()!.getText()),
       ));
 
-    if (widget.selectBoxController.multiple)
-      widget.selectBoxController.getSelectedAll().forEach((option) {
+    if (widget.controller.multiple)
+      widget.controller.getSelectedAll().forEach((option) {
         children.add(Container(
           margin: EdgeInsets.only(right: 5.0, bottom: 1.0, top: 1.0),
           child: Material(
@@ -436,16 +452,16 @@ class _BsSelectBoxState extends State<BsSelectBox>
                     _keyOverlay.currentState!.mounted)
                   _keyOverlay.currentState!.setState(() {});
 
-                widget.selectBoxController.removeSelected(option);
+                widget.controller.removeSelected(option);
 
-                formFieldState.didChange(widget.selectBoxController.getSelectedAsString());
+                formFieldState.didChange(widget.controller.getSelectedAsString());
 
                 updateState(() {});
               },
               child: Container(
                 padding: EdgeInsets.fromLTRB(8.0, 2.0, 8.0, 2.0),
                 decoration: BoxDecoration(
-                  color: widget.style.selectedBackgroundColor,
+                  color: widget.style.selectedColor,
                   borderRadius: BorderRadius.all(Radius.circular(50.0)),
                 ),
                 child: Row(
@@ -485,19 +501,25 @@ class _BsSelectBoxState extends State<BsSelectBox>
         double? y = widget.size.labelY;
         double fontSize = widget.style.fontSize + 2.0;
 
-        if (widget.selectBoxController.getSelected() != null) {
-          x = -widget.size.transitionLabelX;
-          y = -widget.size.transitionLabelY;
+        if (widget.controller.getSelected() != null) {
+          x = widget.size.transitionLabelX;
+          y = widget.size.transitionLabelY;
           fontSize = widget.style.fontSize - 2.0;
-        } else if (widget.selectBoxController.getSelected() != null && isOpen) {
-          x = -widget.size.transitionLabelX;
-          y = -widget.size.transitionLabelY * _animated.value;
+        } else if (widget.controller.getSelected() != null && isOpen) {
+          x = widget.size.transitionLabelX;
+          y = widget.size.transitionLabelY * _animated.value;
           fontSize = widget.style.fontSize - 2.0 * _animated.value;
         }
 
-        Color color = widget.style.placeholderColor;
+        Color backgroundColor = Colors.transparent;
+        Color color = widget.style.hintTextColor;
         if(isOpen)
-          color = widget.style.colorFocused;
+          color = widget.style.focusedTextColor;
+
+        if(widget.controller.getSelected() != null) {
+          color = widget.style.backgroundColor;
+          backgroundColor = Colors.white;
+        }
 
         if(!valid)
           color = BsColor.danger;
@@ -508,10 +530,15 @@ class _BsSelectBoxState extends State<BsSelectBox>
           child: Align(
             alignment: Alignment.centerLeft,
             child: Material(
+              color: Colors.transparent,
               child: InkWell(
                 onTap: pressed,
                 child: Container(
-                  color: Colors.white,
+                  padding: EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
+                  decoration: BoxDecoration(
+                    color: backgroundColor,
+                    borderRadius: widget.style.borderRadius
+                  ),
                   child: Text(widget.hintTextLabel!,
                     style: TextStyle(
                       color: color,
