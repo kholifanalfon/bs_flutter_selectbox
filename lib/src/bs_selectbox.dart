@@ -163,7 +163,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
   }
 
   void open() {
-    BsOverlay.removeAll();
+    SelectBoxOverlay.removeAll();
     _animated.forward();
 
     _wrapperOptions = BsWrapperOptions(
@@ -221,7 +221,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
       },
     );
 
-    BsOverlayEntry overlayEntry = BsOverlay.add(OverlayEntry(builder: (context) {
+    SelectBoxOverlayEntry overlayEntry = SelectBoxOverlay.add(OverlayEntry(builder: (context) {
       return _wrapperOptions!;
     }), () => updateState(() => isOpen = false));
 
@@ -234,14 +234,14 @@ class _BsSelectBoxState extends State<BsSelectBox>
   }
 
   void close() {
-    BsOverlay.removeAll();
+    SelectBoxOverlay.removeAll();
     _animated.reverse();
 
     updateState(() => isOpen = false);
   }
 
   void clear() {
-    BsOverlay.removeAll();
+    SelectBoxOverlay.removeAll();
     widget.controller.clear();
     formFieldState.didChange(widget.controller.getSelectedAsString());
     updateState(() => _focusNode.requestFocus());

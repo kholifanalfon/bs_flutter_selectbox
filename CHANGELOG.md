@@ -1,4 +1,5 @@
-### 1.2.0
+### 1.2.1
+* Close overlay by click outsite
 * Custom style
 
 ### 1.1.13
