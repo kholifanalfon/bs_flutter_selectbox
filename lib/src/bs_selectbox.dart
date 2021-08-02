@@ -29,9 +29,13 @@ class BsSelectBox extends StatefulWidget {
     this.disabled = false,
     this.validators = const [],
     this.onChange,
+    this.onRemoveSelectedItem,
+    this.onClear,
+    this.onClose,
+    this.onOpen,
     this.dialogStyle = const BsDialogBoxStyle(),
     this.paddingDialog = const EdgeInsets.all(10.0),
-    this.marginDialog = const EdgeInsets.only(top: 2.0, bottom: 2.0)
+    this.marginDialog = const EdgeInsets.only(top: 2.0, bottom: 2.0),
   }) : super(key: key);
 
   @override
@@ -74,6 +78,14 @@ class BsSelectBox extends StatefulWidget {
   final EdgeInsetsGeometry paddingDialog;
 
   final EdgeInsets marginDialog;
+
+  final ValueChanged<BsSelectBoxOption>? onRemoveSelectedItem;
+
+  final VoidCallback? onClear;
+
+  final VoidCallback? onOpen;
+
+  final VoidCallback? onClose;
 }
 
 class _BsSelectBoxState extends State<BsSelectBox>
@@ -230,12 +242,18 @@ class _BsSelectBoxState extends State<BsSelectBox>
     
     if (widget.serverSide != null) api();
 
+    if(widget.onOpen != null)
+      widget.onOpen!();
+
     updateState(() => isOpen = true);
   }
 
   void close() {
     SelectBoxOverlay.removeAll();
     _animated.reverse();
+
+    if(widget.onClose != null)
+      widget.onClose!();
 
     updateState(() => isOpen = false);
   }
@@ -244,6 +262,10 @@ class _BsSelectBoxState extends State<BsSelectBox>
     SelectBoxOverlay.removeAll();
     widget.controller.clear();
     formFieldState.didChange(widget.controller.getSelectedAsString());
+
+    if(widget.onClear != null)
+      widget.onClear!();
+
     updateState(() => _focusNode.requestFocus());
   }
 
@@ -377,7 +399,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
                   Expanded(
                     child: Container(
                       padding: widget.padding,
-                      child: widget.controller.getSelected() == null ? widget.hintText == null ? Text('') : Text(
+                      child: widget.controller.getSelectedAll().length == 0 ? widget.hintText == null ? Text('') : Text(
                         widget.hintText!,
                         style: TextStyle(
                           color: valid ? widget.style.hintTextColor : Colors.red,
@@ -436,7 +458,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
       children.add(DefaultTextStyle(
         style: TextStyle(
           fontSize: widget.size.fontSize,
-          color: widget.style.textColor,
+          color: widget.style.selectedTextColor,
         ),
         child: Container(child: widget.controller.getSelected()!.getText()),
       ));
@@ -446,6 +468,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
         children.add(Container(
           margin: EdgeInsets.only(right: 5.0, bottom: 1.0, top: 1.0),
           child: Material(
+            color: Colors.transparent,
             child: InkWell(
               onTap: () {
                 if (_keyOverlay.currentState != null &&
@@ -453,6 +476,9 @@ class _BsSelectBoxState extends State<BsSelectBox>
                   _keyOverlay.currentState!.setState(() {});
 
                 widget.controller.removeSelected(option);
+
+                if(widget.onRemoveSelectedItem != null)
+                  widget.onRemoveSelectedItem!(option);
 
                 formFieldState.didChange(widget.controller.getSelectedAsString());
 
@@ -473,14 +499,14 @@ class _BsSelectBoxState extends State<BsSelectBox>
                       child: DefaultTextStyle(
                         style: TextStyle(
                           fontSize: widget.style.fontSize - 2,
-                          color: widget.style.selectedColor,
+                          color: widget.style.selectedTextColor,
                         ),
                         child: option.getText(),
                       )
                     ),
                     Icon(Icons.close,
                       size: widget.style.fontSize - 2,
-                      color: widget.style.selectedColor
+                      color: widget.style.selectedTextColor
                     ),
                   ],
                 ),

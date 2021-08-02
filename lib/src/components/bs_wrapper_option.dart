@@ -243,7 +243,6 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
                                 borderRadius: BorderRadius.all(Radius.circular(5.0)),
                               ),
                               child: TextField(
-                                readOnly: widget.controller.processing,
                                 focusNode: _focusNode,
                                 controller: _controller,
                                 decoration: InputDecoration(

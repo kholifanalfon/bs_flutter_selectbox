@@ -113,9 +113,10 @@ class _MyAppState extends State<MyApp> {
                               backgroundColor: Colors.blueAccent,
                               hintTextColor: Colors.white,
                               selectedColor: Color(0xff3872d1),
+                              selectedTextColor: Colors.white,
                               textColor: Colors.white,
                               borderRadius: BorderRadius.circular(50.0),
-                              focusedTextColor: Color(0xff3367bd)
+                              focusedTextColor: Color(0xff3367bd),
                           ),
                           paddingDialog: EdgeInsets.all(15),
                           marginDialog: EdgeInsets.only(top: 5.0, bottom: 5.0),
@@ -132,6 +133,7 @@ class _MyAppState extends State<MyApp> {
                             backgroundColor: Colors.lightGreen,
                             hintTextColor: Colors.white,
                             selectedColor: Color(0xff608733),
+                            selectedTextColor: Colors.white,
                             textColor: Colors.white,
                             focusedTextColor: Color(0xff608733),
                             borderRadius: BorderRadius.circular(50.0),
@@ -176,6 +178,20 @@ class _MyAppState extends State<MyApp> {
                           style: BsButtonStyle.primary,
                           onPressed: () {
                             _formState.currentState!.validate();
+                          },
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(bottom: 10.0),
+                        child: BsButton(
+                          label: Text('Set Selected Multiple'),
+                          prefixIcon: Icons.open_in_new,
+                          style: BsButtonStyle.primary,
+                          onPressed: () {
+                            _select3.setSelected(BsSelectBoxOption(value: '1', text: Text('Test')));
+
+                            setState(() {
+                            });
                           },
                         ),
                       ),

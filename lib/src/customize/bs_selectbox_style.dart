@@ -6,7 +6,7 @@ class BsSelectBoxStyle {
     this.borderRadius = const BorderRadius.all(Radius.circular(5.0)),
     this.fontSize = 12.0,
     this.selectedColor = const Color(0xfff1f1f1),
-    this.selectedTextColor = const Color(0xfff1f1f1),
+    this.selectedTextColor = const Color(0xff212529),
     this.textColor = const Color(0xff212529),
     this.hintTextColor = Colors.grey,
     this.border,
