@@ -107,7 +107,7 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
       if(event.logicalKey == LogicalKeyboardKey.escape)
         widget.onClose();
 
-      return false;
+      return KeyEventResult.ignored;
     });
     _focusNode.addListener(onFocus);
     _focusNode.requestFocus();
