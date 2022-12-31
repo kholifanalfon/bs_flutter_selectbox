@@ -1,7 +1,6 @@
 import 'package:bs_flutter_buttons/bs_flutter_buttons.dart';
 import 'package:bs_flutter_modal/bs_flutter_modal.dart';
 import 'package:bs_flutter_responsive/bs_flutter_responsive.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:bs_flutter_selectbox/bs_flutter_selectbox.dart';
 import 'package:http/http.dart' as http;
@@ -18,8 +17,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   GlobalKey<FormState> _formState = GlobalKey<FormState>();
+  final myObj = MyObj();
 
   BsSelectBoxController _select1 = BsSelectBoxController(options: [
     BsSelectBoxOption(value: 1, text: Text('1')),
@@ -33,7 +32,8 @@ class _MyAppState extends State<MyApp> {
     BsSelectBoxOption(value: 3, text: Text('3')),
   ]);
 
-  BsSelectBoxController _select3 = BsSelectBoxController(multiple: true, options: [
+  BsSelectBoxController _select3 =
+      BsSelectBoxController(multiple: true, options: [
     BsSelectBoxOption(value: 1, text: Text('1')),
     BsSelectBoxOption(value: 2, text: Text('2')),
     BsSelectBoxOption(value: 3, text: Text('3')),
@@ -45,7 +45,8 @@ class _MyAppState extends State<MyApp> {
   BsSelectBoxController _select4 = BsSelectBoxController();
   BsSelectBoxController _select5 = BsSelectBoxController();
 
-  BsSelectBoxController _select6 = BsSelectBoxController(multiple: true, options: [
+  BsSelectBoxController _select6 =
+      BsSelectBoxController(multiple: true, options: [
     BsSelectBoxOption(value: 1, text: Text('1')),
     BsSelectBoxOption(value: 2, text: Text('2')),
     BsSelectBoxOption(value: 3, text: Text('3')),
@@ -94,9 +95,11 @@ class _MyAppState extends State<MyApp> {
                         child: BsSelectBox(
                           hintText: 'Pilih salah satu',
                           controller: _select1,
-                          validators: [
-                            BsSelectValidators.required
-                          ],
+                          validators: [BsSelectValidators.required],
+                          onChange: (value) {
+                            print('${value.getValue()}');
+                            myObj.select1Value = value.getValueAsString();
+                          },
                         ),
                       ),
                       Container(
@@ -110,13 +113,13 @@ class _MyAppState extends State<MyApp> {
                             borderRadius: BorderRadius.circular(20.0),
                           ),
                           style: BsSelectBoxStyle(
-                              backgroundColor: Colors.blueAccent,
-                              hintTextColor: Colors.white,
-                              selectedColor: Color(0xff3872d1),
-                              selectedTextColor: Colors.white,
-                              textColor: Colors.white,
-                              borderRadius: BorderRadius.circular(50.0),
-                              focusedTextColor: Color(0xff3367bd),
+                            backgroundColor: Colors.blueAccent,
+                            hintTextColor: Colors.white,
+                            selectedColor: Color(0xff3872d1),
+                            selectedTextColor: Colors.white,
+                            textColor: Colors.white,
+                            borderRadius: BorderRadius.circular(50.0),
+                            focusedTextColor: Color(0xff3367bd),
                           ),
                           paddingDialog: EdgeInsets.all(15),
                           marginDialog: EdgeInsets.only(top: 5.0, bottom: 5.0),
@@ -150,6 +153,16 @@ class _MyAppState extends State<MyApp> {
                         child: BsSelectBox(
                           hintText: 'Pilih multiple',
                           controller: _select3,
+                          onChange: (value) {
+                            print('${value.getValueAsString()}');
+                            myObj.multipleSelectValue
+                                .add(value.getValueAsString());
+                          },
+                          onRemoveSelectedItem: (value) {
+                            print('${value.getValueAsString()}');
+                            myObj.multipleSelectValue
+                                .remove(value.getValueAsString());
+                          },
                         ),
                       ),
                       Container(
@@ -173,11 +186,27 @@ class _MyAppState extends State<MyApp> {
                       Container(
                         margin: EdgeInsets.only(bottom: 10.0),
                         child: BsButton(
-                          label: Text('Validate'),
+                          label: Text('Validate and Save'),
                           prefixIcon: Icons.open_in_new,
                           style: BsButtonStyle.primary,
                           onPressed: () {
-                            _formState.currentState!.validate();
+                            // Want to get selected value. You have two options.
+                            final v = _formState.currentState!.validate();
+                            if (v) {
+                              _formState.currentState!.save();
+                              // 1. use controller to get selected value/values
+                              final selectedValue =
+                                  _select1.getSelected()?.getValueAsString();
+                              print('selectedValue: $selectedValue');
+                              final selectedList = _select3.getSelectedAll();
+                              final selectedValuesList =
+                                  selectedList.map((element) {
+                                return element.getValueAsString();
+                              });
+                              print('selectedValuesList: $selectedValuesList');
+                              // 2. or use select callback
+                              print('myObj: $myObj');
+                            }
                           },
                         ),
                       ),
@@ -188,10 +217,10 @@ class _MyAppState extends State<MyApp> {
                           prefixIcon: Icons.open_in_new,
                           style: BsButtonStyle.primary,
                           onPressed: () {
-                            _select3.setSelected(BsSelectBoxOption(value: '1', text: Text('Test')));
+                            _select3.setSelected(BsSelectBoxOption(
+                                value: '1', text: Text('Test')));
 
-                            setState(() {
-                            });
+                            setState(() {});
                           },
                         ),
                       ),
@@ -207,8 +236,11 @@ class _MyAppState extends State<MyApp> {
                               dialog: BsModalDialog(
                                 child: BsModalContent(
                                   children: [
-                                    BsModalContainer(title: Text('Modal Select Box'), closeButton: true),
-                                    BsModalContainer(child: Column(
+                                    BsModalContainer(
+                                        title: Text('Modal Select Box'),
+                                        closeButton: true),
+                                    BsModalContainer(
+                                        child: Column(
                                       children: [
                                         BsCol(
                                           sizes: ColScreen(sm: Col.col_2),
@@ -234,9 +266,7 @@ class _MyAppState extends State<MyApp> {
                           margin: EdgeInsets.only(top: 200.0),
                           hintText: 'Pilih salah satu',
                           controller: _select1,
-                          validators: [
-                            BsSelectValidators.required
-                          ],
+                          validators: [BsSelectValidators.required],
                         ),
                       ),
                     ],
@@ -248,5 +278,14 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
     );
+  }
+}
+
+class MyObj {
+  var select1Value = '';
+  var multipleSelectValue = Set<String>();
+  @override
+  String toString() {
+    return '{select1Value = $select1Value, multipleSelectValue = $multipleSelectValue}';
   }
 }
