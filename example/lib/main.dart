@@ -190,10 +190,22 @@ class _MyAppState extends State<MyApp> {
                           prefixIcon: Icons.open_in_new,
                           style: BsButtonStyle.primary,
                           onPressed: () {
+                            // Want to get selected value. You have two options.
                             final v = _formState.currentState!.validate();
                             if (v) {
                               _formState.currentState!.save();
-                              print('$myObj');
+                              // 1. use controller to get selected value/values
+                              final selectedValue =
+                                  _select1.getSelected()?.getValueAsString();
+                              print('selectedValue: $selectedValue');
+                              final selectedList = _select3.getSelectedAll();
+                              final selectedValuesList =
+                                  selectedList.map((element) {
+                                return element.getValueAsString();
+                              });
+                              print('selectedValuesList: $selectedValuesList');
+                              // 2. or use select callback
+                              print('myObj: $myObj');
                             }
                           },
                         ),
