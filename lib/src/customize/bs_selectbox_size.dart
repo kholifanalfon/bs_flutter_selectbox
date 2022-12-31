@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class BsSelectBoxSize {
   const BsSelectBoxSize({
     this.maxHeight = 300.0,
@@ -8,7 +10,10 @@ class BsSelectBoxSize {
     this.labelY = 0.0,
     this.transitionLabelX = 8.0,
     this.transitionLabelY = -40.0,
+    this.padding = EdgeInsets.zero,
   });
+
+  final EdgeInsets padding;
 
   final double maxHeight;
 

@@ -22,8 +22,6 @@ class BsSelectBoxController {
   /// define selected value with private
   List<BsSelectBoxOption>? _selected;
 
-
-
   /// to clear selected value of [BsSelectBox]
   void clear() {
     if (_selected != null) _selected = null;
@@ -40,11 +38,11 @@ class BsSelectBoxController {
 
   /// to set selected value of [BsSelectBox]
   void setSelected(BsSelectBoxOption option) {
+    if (_selected == null)
+      _selected = List<BsSelectBoxOption>.empty(growable: true);
 
-    if (_selected == null) _selected = List<BsSelectBoxOption>.empty(growable: true);
-
-    if (!multiple) _selected = [option];
-
+    if (!multiple)
+      _selected = [option];
     else if (multiple) _selected!.add(option);
   }
 
@@ -76,20 +74,22 @@ class BsSelectBoxController {
       _selected != null ? _selected!.first : null;
 
   /// get all selected value, this function used when [BsSelectBox] allowd multiple
-  List<BsSelectBoxOption> getSelectedAll() => _selected != null ? _selected! : [];
+  List<BsSelectBoxOption> getSelectedAll() =>
+      _selected != null ? _selected! : [];
 
   /// get selected value in string
-  String getSelectedAsString() {
+  String? getSelectedAsString() {
     if (_selected != null) {
       StringBuffer string = StringBuffer();
       _selected!.forEach((option) {
         string.write(option.getValueAsString() + ',');
       });
 
-      return string.toString().length == 0 ? ''
+      return string.toString().length == 0
+          ? null
           : string.toString().substring(0, string.toString().length - 1);
     }
 
-    return '';
+    return null;
   }
 }
