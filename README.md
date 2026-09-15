@@ -1,6 +1,9 @@
 # Bs Flutter Select Box
 
-Web HTML select option with serverside
+A searchable Material UI select box with multi-select and server-side data support.
+
+Requires Flutter 3.44 or newer and uses the standalone
+[`material_ui`](https://pub.dev/packages/material_ui) package.
 
 ![Alt text](https://raw.githubusercontent.com/kholifanalfon/bs_flutter_selectbox/main/screenshot/general.png "Bs Select Box")
 
@@ -17,8 +20,8 @@ Add the dependency in `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  ...
-  bs_flutter: any
+  bs_flutter_selectbox: ^2.0.0
+  material_ui: ^1.2.0
 ```
 
 ## Select Box
@@ -28,6 +31,7 @@ To create a select box you need to import:
 
 ```dart
 import 'package:bs_flutter_selectbox/bs_flutter_selectbox.dart';
+import 'package:material_ui/material_ui.dart';
 ```
 
 After create controller:

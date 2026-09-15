@@ -43,7 +43,8 @@ class BsSelectBoxController {
 
     if (!multiple)
       _selected = [option];
-    else if (multiple) _selected!.add(option);
+    else if (multiple)
+      _selected!.add(option);
   }
 
   /// to set selected multiple value of [BsSelectBox]
@@ -61,8 +62,9 @@ class BsSelectBoxController {
   /// remove selected value
   void removeSelected(BsSelectBoxOption option) {
     if (_selected != null) {
-      int index = _selected!
-          .indexWhere((element) => element.getValue() == option.getValue());
+      int index = _selected!.indexWhere(
+        (element) => element.getValue() == option.getValue(),
+      );
       if (index != -1) _selected!.removeAt(index);
 
       if (_selected!.length == 0) clear();

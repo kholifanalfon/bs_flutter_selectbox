@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:bs_flutter_selectbox/bs_flutter_selectbox.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Wrapper overlay of options
 class BsWrapperOptions extends StatefulWidget {
@@ -70,12 +70,6 @@ class BsWrapperOptions extends StatefulWidget {
   final EdgeInsetsGeometry padding;
 
   final EdgeInsets margin;
-
-  Function _update = () {};
-
-  void update() {
-    _update();
-  }
 }
 
 class _BsWrapperOptionsState extends State<BsWrapperOptions> {
@@ -99,11 +93,13 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
 
   @override
   void initState() {
-    _focusNode = FocusNode(onKey: (node, event) {
-      if (event.logicalKey == LogicalKeyboardKey.escape) widget.onClose();
+    _focusNode = FocusNode(
+      onKeyEvent: (node, event) {
+        if (event.logicalKey == LogicalKeyboardKey.escape) widget.onClose();
 
-      return KeyEventResult.ignored;
-    });
+        return KeyEventResult.ignored;
+      },
+    );
     _focusNode.addListener(onFocus);
     _focusNode.requestFocus();
 
@@ -117,9 +113,6 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
     _overlayLeft = widget.margin.left;
     _overlayWidth = _size.width - (widget.margin.right + widget.margin.left);
 
-    widget._update = () {
-      _checkHeight();
-    };
     super.initState();
   }
 
@@ -160,8 +153,10 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
       _overlayHeight = size.height;
       _overlayTop = _size.height + widget.margin.bottom;
 
-      Offset overlayMaxPosition = Offset(_offset.dx + _size.width + size.width,
-          _offset.dy + _size.height + _overlayHeight);
+      Offset overlayMaxPosition = Offset(
+        _offset.dx + _size.width + size.width,
+        _offset.dy + _size.height + _overlayHeight,
+      );
 
       double topHeight = _offset.dy + _size.height - 10;
       double bottomHeight = screenSize.height - (_offset.dy + 10);
@@ -229,11 +224,11 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
                               ? widget.style.boxShadow
                               : [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
+                                    color: Colors.black.withValues(alpha: 0.2),
                                     blurRadius: 8.0,
                                     spreadRadius: 0.0,
                                     offset: Offset(2.0, 2.0),
-                                  )
+                                  ),
                                 ],
                         ),
                         child: Column(
@@ -245,7 +240,8 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
                                     decoration: BoxDecoration(
                                       color: widget.selectBoxStyle.searchColor,
                                       border: widget.selectBoxStyle.border,
-                                      borderRadius: widget.selectBoxStyle.borderRadius,
+                                      borderRadius:
+                                          widget.selectBoxStyle.borderRadius,
                                     ),
                                     child: TextField(
                                       focusNode: _focusNode,
@@ -253,24 +249,27 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
                                       decoration: InputDecoration(
                                         hintText: widget.placeholderSearch,
                                         hintStyle: TextStyle(
-                                            color: widget
-                                                .selectBoxStyle.searchTextColor,
-                                            fontSize: widget.selectBoxSize
-                                                .searchInputFontSize),
+                                          color: widget
+                                              .selectBoxStyle
+                                              .searchTextColor,
+                                          fontSize: widget
+                                              .selectBoxSize
+                                              .searchInputFontSize,
+                                        ),
                                         border: InputBorder.none,
                                         contentPadding: EdgeInsets.all(12.0),
                                         isDense: true,
                                       ),
                                       style: TextStyle(
-                                          color: widget
-                                              .selectBoxStyle.searchTextColor),
-                                      onChanged: (value) => doneTyping(
-                                        value,
-                                        (value) {
-                                          if (widget.onSearch != null)
-                                            widget.onSearch!(value);
-                                        },
+                                        color: widget
+                                            .selectBoxStyle
+                                            .searchTextColor,
                                       ),
+                                      onChanged: (value) =>
+                                          doneTyping(value, (value) {
+                                            if (widget.onSearch != null)
+                                              widget.onSearch!(value);
+                                          }),
                                     ),
                                   ),
                             !widget.controller.processing
@@ -278,7 +277,11 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
                                 : Center(
                                     child: Container(
                                       padding: EdgeInsets.fromLTRB(
-                                          12.0, 5.0, 12.0, 5.0),
+                                        12.0,
+                                        5.0,
+                                        12.0,
+                                        5.0,
+                                      ),
                                       margin: EdgeInsets.only(top: 8.0),
                                       child: CircularProgressIndicator(),
                                     ),
@@ -290,16 +293,22 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
                                     child: Container(
                                       margin: EdgeInsets.only(top: 8.0),
                                       padding: EdgeInsets.fromLTRB(
-                                          12.0, 5.0, 12.0, 5.0),
+                                        12.0,
+                                        5.0,
+                                        12.0,
+                                        5.0,
+                                      ),
                                       child: Text(
                                         widget.noDataText,
                                         style: TextStyle(
-                                            color:
-                                                widget.selectBoxStyle.textColor,
-                                            fontSize: widget
-                                                .selectBoxSize.optionFontSize,
-                                            fontWeight: FontWeight.w100,
-                                            fontStyle: FontStyle.italic),
+                                          color:
+                                              widget.selectBoxStyle.textColor,
+                                          fontSize: widget
+                                              .selectBoxSize
+                                              .optionFontSize,
+                                          fontWeight: FontWeight.w100,
+                                          fontStyle: FontStyle.italic,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -313,35 +322,41 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
                                         : _overlayHeight,
                                     child: ConstrainedBox(
                                       constraints: BoxConstraints(
-                                          maxHeight:
-                                              widget.selectBoxSize.maxHeight),
+                                        maxHeight:
+                                            widget.selectBoxSize.maxHeight,
+                                      ),
                                       child: Scrollbar(
                                         child: SingleChildScrollView(
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
-                                            children: widget.controller.options
-                                                .map((option) {
-                                              Color textColor = widget.style
-                                                          .itemTextColor !=
+                                            children: widget.controller.options.map((
+                                              option,
+                                            ) {
+                                              Color textColor =
+                                                  widget.style.itemTextColor !=
                                                       null
                                                   ? widget.style.itemTextColor!
                                                   : widget
-                                                      .selectBoxStyle.textColor;
+                                                        .selectBoxStyle
+                                                        .textColor;
                                               Color backgroundColor =
                                                   widget.style.itemColor != null
-                                                      ? widget.style.itemColor!
-                                                      : widget.selectBoxStyle
-                                                          .backgroundColor;
+                                                  ? widget.style.itemColor!
+                                                  : widget
+                                                        .selectBoxStyle
+                                                        .backgroundColor;
 
                                               if (widget.controller
                                                       .getSelected() !=
                                                   null) {
                                                 int index = widget.controller
                                                     .getSelectedAll()
-                                                    .indexWhere((element) =>
-                                                        element.getValue() ==
-                                                        option.getValue());
+                                                    .indexWhere(
+                                                      (element) =>
+                                                          element.getValue() ==
+                                                          option.getValue(),
+                                                    );
 
                                                 if (index != -1) {
                                                   backgroundColor = widget
@@ -358,46 +373,48 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
                                                   Expanded(
                                                     child: Container(
                                                       margin: EdgeInsets.only(
-                                                          bottom: 2.0),
+                                                        bottom: 2.0,
+                                                      ),
                                                       child: Material(
                                                         color: backgroundColor,
                                                         borderRadius:
-                                                            BorderRadius
-                                                                .circular(5.0),
+                                                            BorderRadius.circular(
+                                                              5.0,
+                                                            ),
                                                         child: InkWell(
                                                           onTap: () {
                                                             widget.onChange(
-                                                                option);
+                                                              option,
+                                                            );
                                                             _focusNode
                                                                 .unfocus();
                                                             updateState(() {});
                                                           },
-                                                          child:
-                                                              DefaultTextStyle(
+                                                          child: DefaultTextStyle(
                                                             style: TextStyle(
-                                                                color:
-                                                                    textColor,
-                                                                fontSize: widget
-                                                                    .selectBoxSize
-                                                                    .optionFontSize),
+                                                              color: textColor,
+                                                              fontSize: widget
+                                                                  .selectBoxSize
+                                                                  .optionFontSize,
+                                                            ),
                                                             child: Container(
                                                               alignment: Alignment
                                                                   .centerLeft,
                                                               padding:
-                                                                  EdgeInsets
-                                                                      .fromLTRB(
-                                                                          12.0,
-                                                                          10.0,
-                                                                          12.0,
-                                                                          10.0),
+                                                                  EdgeInsets.fromLTRB(
+                                                                    12.0,
+                                                                    10.0,
+                                                                    12.0,
+                                                                    10.0,
+                                                                  ),
                                                               child: option
                                                                   .getText(),
                                                             ),
                                                           ),
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      5.0),
+                                                              BorderRadius.circular(
+                                                                5.0,
+                                                              ),
                                                           splashColor: widget
                                                               .selectBoxStyle
                                                               .selectedColor,
@@ -407,7 +424,7 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
                                                         ),
                                                       ),
                                                     ),
-                                                  )
+                                                  ),
                                                 ],
                                               );
                                             }).toList(),
@@ -415,15 +432,15 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
                                         ),
                                       ),
                                     ),
-                                  )
+                                  ),
                           ],
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

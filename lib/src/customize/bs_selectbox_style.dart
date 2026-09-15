@@ -1,5 +1,4 @@
-
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../utils/bs_utils.dart';
 
@@ -22,7 +21,7 @@ class BsSelectBoxStyle {
     this.focusedBorder,
     this.focusedTextColor = BsColor.primary,
     this.searchColor = Colors.white,
-    this.searchTextColor = const Color(0xff212529)
+    this.searchTextColor = const Color(0xff212529),
   });
 
   /// define border radius of [BsSelectBox]
@@ -85,13 +84,13 @@ class BsSelectBoxStyle {
         color: BsColor.primaryShadow,
         offset: Offset(0, 0),
         spreadRadius: 2.5,
-      )
+      ),
     ],
     focusedBorder: Border(
       top: BorderSide(color: BsColor.primary),
       bottom: BorderSide(color: BsColor.primary),
       left: BorderSide(color: BsColor.primary),
       right: BorderSide(color: BsColor.primary),
-    )
+    ),
   );
 }

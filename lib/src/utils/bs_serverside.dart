@@ -1,5 +1,5 @@
 import 'package:bs_flutter_selectbox/bs_flutter_selectbox.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// define function for renderText options
 typedef BsRenderText = Widget Function(dynamic data);
@@ -8,15 +8,13 @@ typedef BsRenderText = Widget Function(dynamic data);
 typedef BsSetOptionValue = dynamic Function(dynamic data);
 
 /// define function fo serverSide mode
-typedef BsSelectBoxServerSide = Future<BsSelectBoxResponse> Function(
-    Map<String, String> params);
+typedef BsSelectBoxServerSide =
+    Future<BsSelectBoxResponse> Function(Map<String, String> params);
 
 /// class response to handle serverside response
 class BsSelectBoxResponse {
   /// Constructor [BsSelectBoxResponse]
-  const BsSelectBoxResponse({
-    this.options = const [],
-  });
+  const BsSelectBoxResponse({this.options = const []});
 
   /// define result options from api response
   final List<BsSelectBoxOption> options;
@@ -24,7 +22,12 @@ class BsSelectBoxResponse {
   /// handle response from api with default setting
   ///
   /// In default setting this function will put value index for value option, and text index for text option from response data
-  factory BsSelectBoxResponse.createFromJson(List map, {BsSetOptionValue? value, BsRenderText? renderText, BsSetOptionValue? other}) {
+  factory BsSelectBoxResponse.createFromJson(
+    List map, {
+    BsSetOptionValue? value,
+    BsRenderText? renderText,
+    BsSetOptionValue? other,
+  }) {
     return BsSelectBoxResponse(
       options: map.map((e) {
         return BsSelectBoxOption(
@@ -32,6 +35,7 @@ class BsSelectBoxResponse {
           text: renderText == null ? Text(e['text']) : renderText(e),
           other: other == null ? e : other(e),
         );
-    }).toList());
+      }).toList(),
+    );
   }
 }

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// This file is copied from bs_flutter_utils package of the same author as bs_flutter_selectbox package
 
@@ -123,45 +123,34 @@ class BreakPoint {
   static Widget onDesktop(BuildContext context, WidgetBuilder builder) =>
       BreakPoint.isDesktop(context) ? builder(context) : Container();
 
-  static Widget on(BuildContext context, {
+  static Widget on(
+    BuildContext context, {
     Widget? mobile,
     Widget? tablet,
     Widget? desktop,
   }) {
-    if(BreakPoint.isMobile(context)) {
-      if(mobile != null)
+    if (BreakPoint.isMobile(context)) {
+      if (mobile != null)
         return mobile;
-
-      else if(tablet != null)
+      else if (tablet != null)
         return tablet;
-
-      else if(desktop != null)
+      else if (desktop != null)
         return desktop;
-
       else
         return Container();
-    }
-
-    else if(BreakPoint.isTablet(context)) {
-      if(tablet != null)
+    } else if (BreakPoint.isTablet(context)) {
+      if (tablet != null)
         return tablet;
-
-      else if(desktop != null)
+      else if (desktop != null)
         return desktop;
-
       else
         return Container();
-    }
-
-    else if(BreakPoint.isDesktop(context)) {
-      if(desktop != null)
+    } else if (BreakPoint.isDesktop(context)) {
+      if (desktop != null)
         return desktop;
-
       else
         return Container();
-    }
-
-    else
+    } else
       return Container();
   }
 }
@@ -169,9 +158,7 @@ class BreakPoint {
 /// If you need to hide some widget in some breakpoint use [BsVisibility]
 /// This helpful to create responsive layout
 class BsVisibility {
-  const BsVisibility({
-    required this.breakPoints,
-  });
+  const BsVisibility({required this.breakPoints});
 
   final List<String> breakPoints;
 
@@ -179,37 +166,41 @@ class BsVisibility {
   static const BsVisibility none = BsVisibility(breakPoints: []);
 
   /// Will show in all breakpoint
-  static const BsVisibility block = BsVisibility(breakPoints: [
-    BreakPoint.stateXs,
-    BreakPoint.stateSm,
-    BreakPoint.stateMd,
-    BreakPoint.stateLg,
-    BreakPoint.stateXl,
-    BreakPoint.stateXxl
-  ]);
+  static const BsVisibility block = BsVisibility(
+    breakPoints: [
+      BreakPoint.stateXs,
+      BreakPoint.stateSm,
+      BreakPoint.stateMd,
+      BreakPoint.stateLg,
+      BreakPoint.stateXl,
+      BreakPoint.stateXxl,
+    ],
+  );
 
   /// Will hide in [BreakPoint.stateSm] breakpoint
-  static const BsVisibility hiddenSm = BsVisibility(breakPoints: [
-    BreakPoint.stateMd,
-    BreakPoint.stateLg,
-    BreakPoint.stateXl,
-    BreakPoint.stateXxl
-  ]);
+  static const BsVisibility hiddenSm = BsVisibility(
+    breakPoints: [
+      BreakPoint.stateMd,
+      BreakPoint.stateLg,
+      BreakPoint.stateXl,
+      BreakPoint.stateXxl,
+    ],
+  );
 
   /// Will hide in ([BreakPoint.stateSm], [BreakPoint.hiddenMd]) breakpoint
-  static const BsVisibility hiddenMd = BsVisibility(breakPoints: [
-    BreakPoint.stateLg,
-    BreakPoint.stateXl,
-    BreakPoint.stateXxl
-  ]);
+  static const BsVisibility hiddenMd = BsVisibility(
+    breakPoints: [BreakPoint.stateLg, BreakPoint.stateXl, BreakPoint.stateXxl],
+  );
 
   /// Will hide in ([BreakPoint.stateSm], [BreakPoint.hiddenMd], [BreakPoint.hiddenMd]) breakpoint
-  static const BsVisibility hiddenLg =
-  BsVisibility(breakPoints: [BreakPoint.stateXl, BreakPoint.stateXxl]);
+  static const BsVisibility hiddenLg = BsVisibility(
+    breakPoints: [BreakPoint.stateXl, BreakPoint.stateXxl],
+  );
 
   /// Will hide in ([BreakPoint.stateSm], [BreakPoint.hiddenMd], [BreakPoint.hiddenMd], [BreakPoint.stateXl) breakpoint
-  static const BsVisibility hiddenXl =
-  BsVisibility(breakPoints: [BreakPoint.stateXxl]);
+  static const BsVisibility hiddenXl = BsVisibility(
+    breakPoints: [BreakPoint.stateXxl],
+  );
 
   /// Will only show on [BreakPoint.stateXxl] screen device
   static const BsVisibility hiddenXxl = BsVisibility(breakPoints: []);
@@ -237,22 +228,21 @@ class BsColor {
 }
 
 class BsShadow {
-
   static const BoxShadow small = BoxShadow(
-      color: Color(0xffd9d9d9),
-      spreadRadius: 2.0,
-      blurRadius: 4.0
+    color: Color(0xffd9d9d9),
+    spreadRadius: 2.0,
+    blurRadius: 4.0,
   );
 
   static const BoxShadow regular = BoxShadow(
-      color: Color(0xffd9d9d9),
-      spreadRadius: 8.0,
-      blurRadius: 16.0
+    color: Color(0xffd9d9d9),
+    spreadRadius: 8.0,
+    blurRadius: 16.0,
   );
 
   static const BoxShadow large = BoxShadow(
-      color: Color(0xffd9d9d9),
-      spreadRadius: 16.0,
-      blurRadius: 48.0
+    color: Color(0xffd9d9d9),
+    spreadRadius: 16.0,
+    blurRadius: 48.0,
   );
 }

@@ -1,14 +1,13 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class BsDialogBoxStyle {
-
   const BsDialogBoxStyle({
     this.itemColor,
     this.itemTextColor,
     this.borderRadius,
     this.backgroundColor,
     this.border,
-    this.boxShadow
+    this.boxShadow,
   });
 
   final Color? itemColor;

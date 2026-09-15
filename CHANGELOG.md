@@ -1,4 +1,10 @@
 
+## 2.0.0
+
+* Migrated from `package:flutter/material.dart` to the standalone
+  `material_ui` package.
+* Raised the minimum SDK versions to Dart 3.12 and Flutter 3.44.
+
 ### 1.2.2
 * Set mutiple selected bug fixed
 * Close overlay by click outsite
